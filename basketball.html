@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Basketball Match Scoresheet</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #121212;
+      color: white;
+    }
+    h1 {
+      font-size: 1.8rem;
+      font-weight: bold;
+      text-align: center;
+      color: #ff3d00;
+    }
+    .btn {
+      font-size: 1rem;
+      padding: 10px 15px;
+    }
+    .timer {
+      font-size: 1.2rem;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    .summary {
+      font-size: 1rem;
+    }
+    .team-section {
+      margin-top: 20px;
+    }
+    .add-player-btn {
+      margin-top: 10px;
+    }
+    .submit-btn {
+      background-color: #ff3d00;
+      border: none;
+      font-size: 1.2rem;
+      font-weight: bold;
+      width: 100%;
+    }
+    .submit-btn:hover {
+      background-color: #e62d00;
+    }
+    @media (max-width: 576px) {
+      h1 {
+        font-size: 1.5rem;
+      }
+      .btn {
+        font-size: 0.9rem;
+        padding: 8px 12px;
+      }
+      .timer {
+        font-size: 1rem;
+      }
+      .summary {
+        font-size: 0.9rem;
+      }
+      .submit-btn {
+        font-size: 1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Basketball Match Scoresheet</h1>
+
+    <!-- Timer Section -->
+    <div class="timer bg-dark p-3 rounded">
+      Time: <span id="timer">00:00</span>
+    </div>
+    <div class="d-flex justify-content-center flex-wrap gap-2 mb-3">
+      <button class="btn btn-success" onclick="startTimer()">Start</button>
+      <button class="btn btn-danger" onclick="stopTimer()">Stop</button>
+      <button class="btn btn-warning" onclick="resetTimer()">Reset</button>
+    </div>
+
+    <!-- Quarter Info -->
+    <div class="text-center mb-3">
+      <h2 style="font-size: 1.2rem;">
+        Quarter: <span id="quarter-info">1</span> | Half: <span id="half-info">1</span>
+      </h2>
+    </div>
+
+    <!-- Team Sections -->
+    <div id="teams" class="row">
+      <!-- Team 1 -->
+      <div class="team-section col-12 col-md-6">
+        <h3 class="text-center">Team 1</h3>
+        <div class="table-responsive">
+          <table class="table table-dark table-striped table-hover text-center">
+            <thead>
+              <tr>
+                <th>Jersey #</th>
+                <th>Player Name</th>
+                <th>Points</th>
+                <th>Fouls</th>
+                <th>Score</th>
+              </tr>
+            </thead>
+            <tbody id="team1-body"></tbody>
+          </table>
+        </div>
+        <button class="btn btn-outline-light add-player-btn w-100" onclick="addPlayerRow('team1-body', 'team1')">Add Player</button>
+        <p class="text-center summary">
+          Total Score: <span id="team1-score">0</span> | Total Fouls: <span id="team1-fouls">0</span>
+        </p>
+      </div>
+
+      <!-- Team 2 -->
+      <div class="team-section col-12 col-md-6">
+        <h3 class="text-center">Team 2</h3>
+        <div class="table-responsive">
+          <table class="table table-dark table-striped table-hover text-center">
+            <thead>
+              <tr>
+                <th>Jersey #</th>
+                <th>Player Name</th>
+                <th>Points</th>
+                <th>Fouls</th>
+                <th>Score</th>
+              </tr>
+            </thead>
+            <tbody id="team2-body"></tbody>
+          </table>
+        </div>
+        <button class="btn btn-outline-light add-player-btn w-100" onclick="addPlayerRow('team2-body', 'team2')">Add Player</button>
+        <p class="text-center summary">
+          Total Score: <span id="team2-score">0</span> | Total Fouls: <span id="team2-fouls">0</span>
+        </p>
+      </div>
+    </div>
+
+    <!-- Submit Button -->
+    <button class="btn submit-btn mt-4" onclick="submitScoresheet()">Submit Scoresheet</button>
+  </div>
+
+  <script>
+    let timerInterval;
+    let time = 0;
+    let quarter = 1;
+    let half = 1;
+
+    function startTimer() {
+      stopTimer(); // Clear previous interval
+      timerInterval = setInterval(() => {
+        time++;
+        const minutes = String(Math.floor(time / 60)).padStart(2, '0');
+        const seconds = String(time % 60).padStart(2, '0');
+        document.getElementById('timer').textContent = `${minutes}:${seconds}`;
+      }, 1000);
+    }
+
+    function stopTimer() {
+      clearInterval(timerInterval);
+    }
+
+    function resetTimer() {
+      time = 0;
+      quarter = 1;
+      half = 1;
+      stopTimer();
+      updateQuarterInfo();
+      document.getElementById('timer').textContent = "00:00";
+    }
+
+    function updateQuarterInfo() {
+      document.getElementById('quarter-info').textContent = quarter;
+      document.getElementById('half-info').textContent = half;
+    }
+
+    function addPlayerRow(teamBodyId, team) {
+      const teamBody = document.getElementById(teamBodyId);
+      const row = document.createElement('tr');
+      row.innerHTML = `
+        <td><input type="number" class="form-control" placeholder="Jersey #" /></td>
+        <td><input type="text" class="form-control" placeholder="Player Name" /></td>
+        <td><input type="number" class="form-control" placeholder="Points" onchange="updateTeamTotals('${team}')" /></td>
+        <td><input type="number" class="form-control" placeholder="Fouls" onchange="updateTeamTotals('${team}')" /></td>
+        <td class="individual-score">0</td>
+      `;
+      teamBody.appendChild(row);
+    }
+
+    function updateTeamTotals(team) {
+      const teamBody = document.getElementById(`${team}-body`);
+      const rows = teamBody.querySelectorAll('tr');
+      let totalPoints = 0;
+      let totalFouls = 0;
+
+      rows.forEach(row => {
+        const points = parseInt(row.querySelector('input:nth-child(3)').value) || 0;
+        const fouls = parseInt(row.querySelector('input:nth-child(4)').value) || 0;
+        row.querySelector('.individual-score').textContent = points;
+        totalPoints += points;
+        totalFouls += fouls;
+      });
+
+      document.getElementById(`${team}-score`).textContent = totalPoints;
+      document.getElementById(`${team}-fouls`).textContent = totalFouls;
+    }
+
+    function submitScoresheet() {
+      alert("Scoresheet submitted successfully!");
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,24 @@
+{
+  "dependencies": {
+    "@google/generative-ai": "^0.21.0",
+    "axios": "^1.7.9",
+    "cors": "^2.8.5",
+    "express": "^4.21.2",
+    "mongoose": "^8.8.1",
+    "nodemon": "^3.1.7",
+    "socket.io": "^4.8.1"
+  },
+  "name": "web",
+  "version": "1.0.0",
+  "main": "scriptLogin.js",
+  "scripts": {
+    "start": "concurrently \"nodemon server.js\" \"nodemon chat.js\""
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "devDependencies": {
+    "concurrently": "^9.1.0"
+  }
+}

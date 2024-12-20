@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Table Tennis Scoresheet</title>
+    <link rel="stylesheet" href="stylesTennis.css">
+    <link rel="stylesheet" href="chatbox.css"> <!-- Link to the external chatbox CSS -->
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="chat.js" defer></script>
+    <script>
+        const API_BASE_URL = "http://192.168.1.4:8000/api"; // Replace with your API base URL
+
+        function getQueryParams() {
+            const params = new URLSearchParams(window.location.search);
+            return {
+                matchId: params.get('matchId')
+            };
+        }
+
+        async function fetchMatchDetails() {
+            const { matchId } = getQueryParams();
+            if (!matchId) {
+                alert("No matchId provided!");
+                return;
+            }
+
+            try {
+                const response = await axios.get(`${API_BASE_URL}/matches/${matchId}`);
+                const match = response.data;
+
+                // Update Team Names and Scores
+                document.getElementById("dept1").textContent = match.team1;
+                document.getElementById("dept2").textContent = match.team2;
+                document.getElementById("score").textContent = `${match.score1} - ${match.score2}`;
+
+                // Populate Game Details Table
+                let gameDetailsBody = '';
+                for (let i = 1; i <= 5; i++) {
+                    const set1 = match[`set${i}_team1`] || 0;
+                    const set2 = match[`set${i}_team2`] || 0;
+                    gameDetailsBody += `
+                        <tr>
+                            <td>Set ${i}</td>
+                            <td>${set1}</td>
+                            <td>${set2}</td>
+                        </tr>
+                    `;
+                }
+                document.getElementById("game-details-body").innerHTML = gameDetailsBody;
+
+                // Populate Player Details for Team 1
+                const team1Players = match.playersTeam1;
+                const team1Stats = team1Players.map(player => `<li>${player}</li>`).join("");
+                document.getElementById("player1-stats").innerHTML = `
+                    <h3>Team 1 Players:</h3>
+                    <ul style="list-style-type: none; padding: 0; margin: 0;">${team1Stats}</ul>
+                `;
+
+                // Populate Player Details for Team 2
+                const team2Players = match.playersTeam2;
+                const team2Stats = team2Players.map(player => `<li>${player}</li>`).join("");
+                document.getElementById("player2-stats").innerHTML = `
+                    <h3>Team 2 Players:</h3>
+                    <ul style="list-style-type: none; padding: 0; margin: 0;">${team2Stats}</ul>
+                `;
+            } catch (error) {
+                console.error("Error fetching match details:", error);
+                alert("Unable to fetch match details. Please try again later.");
+            }
+        }
+
+        function setupAutoReload() {
+            fetchMatchDetails(); // Initial fetch
+            setInterval(fetchMatchDetails, 5000); // Reload every 5 seconds
+        }
+
+        window.onload = setupAutoReload;
+
+        function goBack() {
+            window.history.back();
+        }
+    </script>
+    <style>
+        /* Ensure proper spacing between player names */
+        ul li {
+            margin-bottom: 8px; /* Adds spacing between players */
+        }
+    </style>
+</head>
+<body>
+    <div class="scoresheet-container">
+        <!-- Back Button with Arrow -->
+        <button onclick="goBack()" class="back-button">
+            &#8592; Back
+        </button>
+
+        <!-- Header Section -->
+        <div class="header">
+            <div class="dept-name" id="dept1">
+                <h2>Team 1</h2>
+            </div>
+            <div class="match-result">
+                <h2>Table Tennis</h2>
+                <h1 class="score" id="score">0 - 0</h1>
+            </div>
+            <div class="dept-name" id="dept2">
+                <h2>Team 2</h2>
+            </div>
+        </div>
+
+        <!-- Image and Player Details Section -->
+        <div class="image-container">
+            <div class="player-left" id="player1-stats">
+                <h3>Team 1 Players:</h3>
+                <ul></ul>
+            </div>
+            <div class="match-image">
+                <img src="assests/TableTennis.png" alt="Match Image"> <!-- Replace with your actual image path -->
+            </div>
+            <div class="player-right" id="player2-stats">
+                <h3>Team 2 Players:</h3>
+                <ul></ul>
+            </div>
+        </div>
+
+        <!-- Game Details Section -->
+        <div class="details">
+            <h3>Game Details</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Set</th>
+                        <th>Team 1 Score</th>
+                        <th>Team 2 Score</th>
+                    </tr>
+                </thead>
+                <tbody id="game-details-body">
+                    <!-- Set scores will go here dynamically -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Chatbox Container -->
+    <div class="chat-container" id="chat-container">
+        <div class="chat-header">
+            <h3>SportBot</h3> <!-- New catchy name for the chatbox -->
+        </div>
+        <div class="chat-box" id="chat-box"></div>
+        <div class="chat-input">
+            <input type="text" id="user-input" placeholder="Ask about sports..." />
+            <button onclick="sendMessage()">Send</button>
+        </div>
+    </div>
+
+    <!-- Chatbox Toggle Icon -->
+    <div class="chat-toggle-icon" onclick="toggleChatBox()">💬</div>
+
+    <script>
+        // Function to append a message to the chat box
+        function appendMessage(content, type) {
+            const chatBox = document.getElementById('chat-box');
+            const messageDiv = document.createElement('div');
+            messageDiv.classList.add('message');
+            messageDiv.classList.add(type === 'user' ? 'user-message' : 'ai-message');
+            messageDiv.textContent = content;
+            chatBox.appendChild(messageDiv);
+            chatBox.scrollTop = chatBox.scrollHeight; // Scroll to the latest message
+        }
+
+        // Function to send message to backend
+        async function sendMessage() {
+            const userInput = document.getElementById('user-input').value;
+
+            if (!userInput) {
+                return;
+            }
+
+            // Display the user's message
+            appendMessage(userInput, 'user');
+
+            // Clear the input field
+            document.getElementById('user-input').value = '';
+            if (userInput.toLowerCase() === "who is anish?" || userInput.toLowerCase() == "who is anish") {
+                appendMessage("Vampanish is my Maker", 'ai');
+                return;
+            }
+
+            try {
+                const response = await fetch('http://192.168.1.4:3000/chat', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ prompt: userInput })
+                });
+
+                const data = await response.json();
+                if (data.answer) {
+                    appendMessage(data.answer, 'ai'); // Display the AI's response
+                } else {
+                    appendMessage("Sorry, I have trouble answering your question.", 'ai'); // Default error response
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                appendMessage("Sorry, something went wrong. Please try again later.", 'ai');
+            }
+        }
+
+        // Toggle chatbox visibility
+        function toggleChatBox() {
+            const chatContainer = document.getElementById('chat-container');
+            chatContainer.classList.toggle('show');
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,367 @@
+/* General Styles */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #000; /* Black background */
+    color: #fff; /* Default text color for dark theme */
+}
+
+/* Container */
+.scoresheet-container {
+    max-width: 100%;
+    margin: 20px auto;
+    padding: 20px;
+    background: #222; /* Dark container background */
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(255, 255, 255, 0.2);
+}
+
+/* Header */
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 3px solid #ff9800; /* Bright orange border */
+    padding-bottom: 10px;
+    margin-bottom: 20px;
+    flex-wrap: wrap; /* Allow wrapping for smaller screens */
+}
+
+.dept-name {
+    width: 30%;
+    text-align: center;
+    padding: 12px;
+    background-color: #444; /* Dark gray background for department cards */
+    border-radius: 8px;
+    font-weight: bold;
+    color: #ff9800; /* Bright orange text for departments */
+    text-transform: uppercase; /* Make player names uppercase */
+    font-size: 22px; /* Increased font size */
+}
+
+.match-result {
+    width: 35%;
+    text-align: center;
+    font-size: 30px; /* Increased font size */
+    color: #ff0000; /* Bright red for match result */
+}
+
+.score {
+    color: #000; /* Change score color to black */
+    font-size: 36px; /* Increased font size */
+    font-weight: bold; /* Make it bold for emphasis */
+}
+
+/* Image and Player Details */
+.image-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between; /* Space between players and image */
+    gap: 20px; /* Space between elements */
+    margin: 20px 0;
+    text-align: center;
+    flex-wrap: wrap; /* Allow wrapping for smaller screens */
+}
+
+.match-image {
+    flex: 1;
+    text-align: center;
+}
+
+.match-image img {
+    width: 80%; /* Adjust image size */
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(255, 255, 255, 0.2);
+}
+
+.player-left, .player-right {
+    width: 25%; /* Reduced width to fit the image in the center */
+    text-align: center;
+    background-color: #333; /* Darker background for player details */
+    border-radius: 8px;
+    padding: 12px; /* Increased padding */
+    box-shadow: 0 2px 4px rgba(255, 255, 255, 0.1);
+    color: #ddd; /* Light gray text for player details */
+    text-transform: uppercase; /* Make player names uppercase */
+    font-size: 20px; /* Increased font size */
+}
+
+/* Center the player names in the player stats section */
+#player1-stats ul, #player2-stats ul {
+    list-style-type: none; /* Remove bullets */
+    padding: 0;
+    color: #fff;
+    text-align: center; /* Center the names inside the unordered list */
+}
+
+#player1-stats li, #player2-stats li {
+    display: inline-block; /* Make each list item inline */
+    margin: 5px 0; /* Add some spacing between names */
+    font-size: 22px; /* Increased font size */
+}
+
+/* Details Section */
+.details {
+    text-align: center;
+    margin-top: 20px;
+}
+
+.details h3 {
+    font-size: 28px; /* Increased font size */
+    color: #ff9800;
+    margin-bottom: 10px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+    font-size: 20px; /* Increased font size for table */
+}
+
+table th, table td {
+    text-align: center;
+    padding: 15px;
+    border: 1px solid #555; /* Dark gray borders */
+}
+
+table th {
+    background-color: #ff0000; /* Red for table headers */
+    color: #fff; /* White text for headers */
+}
+
+table tr:nth-child(even) {
+    background-color: #333; /* Dark gray rows for even rows */
+}
+
+table tr:nth-child(odd) {
+    background-color: #444; /* Slightly lighter gray for odd rows */
+}
+
+/* Stats Section */
+.stats {
+    text-align: center;
+    margin-top: 20px;
+}
+
+.stats h3 {
+    font-size: 28px; /* Increased font size */
+    color: #ff9800; /* Bright red-orange for section title */
+    margin-bottom: 10px;
+}
+
+.stats ul {
+    list-style-type: none; /* Remove bullets */
+    padding: 0;
+    color: #fff;
+}
+
+.stats li {
+    margin: 12px 0;
+    font-size: 22px; /* Increased font size */
+}
+
+/* Back Button with Arrow */
+.back-button {
+    background-color: #4CAF50; /* Green */
+    color: white;
+    padding: 10px 20px;
+    font-size: 16px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin: 10px 0;
+    display: inline-flex;
+    align-items: center;
+}
+
+.back-button:hover {
+    background-color: #45a049;
+}
+
+/* Back Arrow Styles */
+.back-button::before {
+    content: '\2190'; /* Unicode for left arrow */
+    margin-right: 8px;
+}
+
+/* Media Queries for Mobile */
+@media (max-width: 768px) {
+    .dept-name {
+        width: 100%; /* Take full width on small screens */
+        margin-bottom: 10px;
+        font-size: 20px; /* Adjust font size for smaller screens */
+    }
+
+    .match-result {
+        width: 100%; /* Take full width on small screens */
+        margin-bottom: 10px;
+        font-size: 28px; /* Adjust font size for smaller screens */
+    }
+
+    .image-container {
+        flex-direction: column; /* Stack player details and image vertically */
+        gap: 10px;
+    }
+
+    .player-left, .player-right {
+        width: 90%; /* Reduce width to fit the screen */
+        padding: 10px;
+        font-size: 18px; /* Adjust font size for mobile */
+    }
+
+    .match-image img {
+        width: 100%; /* Make the image responsive */
+        max-width: 320px; /* Limit the image size */
+    }
+
+    .score {
+        font-size: 30px; /* Adjust font size */
+    }
+
+    table th, table td {
+        font-size: 18px; /* Adjust font size for table content */
+        padding: 12px;
+    }
+
+    table {
+        font-size: 18px; /* Adjust table font size for mobile */
+    }
+}
+
+@media (max-width: 480px) {
+    .header {
+        flex-direction: column; /* Stack header items vertically */
+        text-align: center;
+    }
+
+    .dept-name {
+        width: 100%;
+        padding: 10px;
+        font-size: 18px; /* Adjust font size for very small screens */
+    }
+
+    .match-result {
+        width: 100%;
+        font-size: 26px; /* Adjust font size for very small screens */
+    }
+
+    .score {
+        font-size: 28px; /* Further increase font size */
+    }
+
+    .image-container {
+        gap: 5px; /* Reduce gap for smaller screens */
+    }
+
+    .player-left, .player-right {
+        font-size: 16px; /* Adjust font size for very small screens */
+    }
+
+    .match-image img {
+        max-width: 240px; /* Further reduce image size */
+    }
+}
+ /* Ensure proper spacing between player names */
+ ul li {
+    margin-bottom: 8px; /* Adds spacing between players */
+}
+
+/* Chat container for bottom-right corner */
+.chat-container {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 400px;
+    height: 500px;
+    background-color: #000000;
+    border-radius: 8px;
+    display: none;
+    flex-direction: column;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+}
+
+/* Chat box content */
+.chat-box {
+    flex-grow: 1;
+    padding: 20px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    color: white;
+    background-color: #fbf2f2;
+    border-radius: 8px;
+}
+
+.chat-input {
+    border-top: 1px solid #555;
+    padding: 10px;
+    display: flex;
+}
+
+.chat-input input {
+    flex-grow: 1;
+    padding: 10px;
+    border: 1px solid #555;
+    border-radius: 4px;
+    margin-right: 10px;
+    background-color: #333;
+    color: white;
+}
+
+.chat-input button {
+    padding: 10px 20px;
+    background-color: #eb2d07;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.chat-input button:hover {
+    background-color: #eb2d07;
+}
+
+.message {
+    padding: 10px;
+    margin: 5px 0;
+    border-radius: 5px;
+    background-color: #f1f1f1;
+    max-width: 80%;
+    color: black;
+}
+
+.user-message {
+    background-color: #eb2d07;
+    align-self: flex-end;
+}
+
+.ai-message {
+    background-color: #3b3737;
+    align-self: flex-start;
+    color:#ffffff;
+}
+
+/* Chatbox Hover Icon */
+.chat-toggle-icon {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 60px;
+    height: 60px;
+    background-color: #007bff;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    cursor: pointer;
+    font-size: 30px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+}
+
+/* Chatbox visible when toggled */
+.chat-container.show {
+    display: flex;
+}

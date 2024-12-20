@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Match Management</title>
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <style>
+    body {
+      background-color: #1f1b2e;
+      color: #fff;
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+    h1 {
+      text-align: center;
+      margin-top: 20px;
+      color: #ff6e7f;
+    }
+    .match-card {
+      background: linear-gradient(45deg, #ff6e7f, #bfe9ff);
+      color: #000;
+      border-radius: 15px;
+      padding: 10px;
+      margin: 10px 0;
+      text-align: center;
+    }
+    .match-form {
+      background: #29253a;
+      padding: 20px;
+      margin: 20px;
+      border-radius: 10px;
+    }
+    .match-form input,
+    .match-form select {
+      padding: 10px;
+      margin-bottom: 10px;
+      border-radius: 5px;
+      width: 100%;
+      font-size: 1rem;
+    }
+
+    /* Custom styles for placeholder in select */
+    select option[disabled] {
+      color: #d1d1d1; /* Light grey color */
+    }
+
+    .footer-menu {
+      position: fixed;
+      bottom: 0;
+      width: 100%;
+      background: #29253a;
+      display: flex;
+      justify-content: space-around;
+      padding: 10px;
+    }
+    .footer-menu a {
+      color: #fff;
+      text-decoration: none;
+    }
+    button {
+      padding: 10px;
+      font-size: 1rem;
+      border-radius: 5px;
+      border: none;
+      cursor: pointer;
+      background-color: #ff6e7f;
+      color: #fff;
+    }
+    button:hover {
+      background-color: #ff4e5f;
+    }
+    .player-fields {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .player-field input {
+      width: 90%; /* Make the input smaller */
+      padding: 10px;
+      margin-right: 10px;
+    }
+
+    .player-field button {
+      padding: 10px;
+      background-color: #ff6e7f;
+      color: #fff;
+      border: none;
+      cursor: pointer;
+      font-size: 0.9rem;
+    }
+
+    .player-field button:hover {
+      background-color: #ff4e5f;
+    }
+  </style>
+</head>
+<body>
+  <h1>Admin Match Management</h1>
+
+  <!-- Form to Add/Update Matches -->
+  <div class="match-form">
+    <h2>Add New Match</h2>
+    <form id="matchForm">
+      <label for="sport">Sport:</label>
+      <select id="sport" name="sport" required>
+        <option value="" disabled selected hidden>Select Sport</option>
+        <option value="Table Tennis">Table Tennis</option>
+        <option value="Football">Football</option>
+        <option value="Badminton">Badminton</option>
+        <option value="Basketball">Basketball</option>
+      </select><br><br>
+
+      <label for="type">Match Type:</label>
+      <select id="type" name="type" required>
+        <option value="live">Live</option>
+        <option value="upcoming">Upcoming</option>
+      </select><br><br>
+
+      <label for="team1">Team 1:</label>
+      <input type="text" id="team1" name="team1" required><br><br>
+
+      <label for="team2">Team 2:</label>
+      <input type="text" id="team2" name="team2" required><br><br>
+
+      <div id="upcomingFields" style="display: none;">
+        <label for="date">Date:</label>
+        <input type="date" id="date" name="date"><br><br>
+
+        <label for="time">Time:</label>
+        <input type="time" id="time" name="time"><br><br>
+      </div>
+
+      <!-- Players for both teams -->
+      <div id="playerFields" style="display: none;">
+        <h3>Team 1 Players</h3>
+        <div id="team1Players" class="player-fields"></div>
+        <button type="button" onclick="addPlayerField('team1Players')">+ Add Player</button><br><br>
+
+        <h3>Team 2 Players</h3>
+        <div id="team2Players" class="player-fields"></div>
+        <button type="button" onclick="addPlayerField('team2Players')">+ Add Player</button><br><br>
+      </div>
+
+      <button type="submit">Submit</button>
+    </form>
+  </div>
+
+  <!-- List of Matches -->
+  <div class="match-list">
+    <h2>Manage Matches</h2>
+    <div id="matches"></div>
+  </div>
+
+  <script>
+    const apiUrl = "http://192.168.1.4:8000/api"; // Adjust API URL as needed
+
+    document.getElementById("type").addEventListener("change", (e) => {
+      const type = e.target.value;
+      document.getElementById("upcomingFields").style.display = type === "upcoming" ? "block" : "none";
+    });
+
+    document.getElementById("sport").addEventListener("change", (e) => {
+      const sport = e.target.value;
+      const playerFields = document.getElementById("playerFields");
+
+      if (sport === "Football" || sport === "Basketball") {
+        playerFields.style.display = "none"; // Hide player fields for Football and Basketball
+      } else {
+        playerFields.style.display = "block"; // Show player fields for Table Tennis and Badminton
+      }
+    });
+
+    function addPlayerField(teamId) {
+      const container = document.getElementById(teamId);
+      const playerDiv = document.createElement("div");
+      playerDiv.className = "player-field";
+      playerDiv.innerHTML = `
+        <input type="text" placeholder="Player Name" required>
+        <button type="button" onclick="removePlayerField(this)">Remove</button>
+      `;
+      container.appendChild(playerDiv);
+    }
+
+    function removePlayerField(button) {
+      button.parentElement.remove();
+    }
+
+    document.getElementById("matchForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const team1Players = Array.from(document.querySelectorAll("#team1Players input"))
+        .map((input) => input.value.trim())
+        .filter(Boolean);
+      const team2Players = Array.from(document.querySelectorAll("#team2Players input"))
+        .map((input) => input.value.trim())
+        .filter(Boolean);
+
+      const matchType = document.getElementById("type").value;
+
+      const matchData = {
+        sport: document.getElementById("sport").value,
+        type: matchType,
+        team1: document.getElementById("team1").value,
+        team2: document.getElementById("team2").value,
+        score1: matchType === "live" ? 0 : null,
+        score2: matchType === "live" ? 0 : null,
+        date: matchType === "upcoming" ? document.getElementById("date").value || null : null,
+        time: matchType === "upcoming" ? document.getElementById("time").value || null : null,
+        playersTeam1: team1Players,
+        playersTeam2: team2Players,
+      };
+
+      try {
+        await axios.post(`${apiUrl}/matches`, matchData);
+        alert("Match added successfully!");
+        fetchMatches();
+      } catch (error) {
+        alert("Failed to submit match. Please try again.");
+      }
+    });
+
+    async function fetchMatches() {
+      try {
+        const response = await axios.get(`${apiUrl}/matches`);
+        renderMatches(response.data);
+      } catch (error) {
+        alert("Failed to fetch matches. Please try again.");
+      }
+    }
+
+    function renderMatches(matches) {
+      const matchesDiv = document.getElementById("matches");
+      matchesDiv.innerHTML = "";
+      matches.forEach((match) => {
+        const matchDiv = document.createElement("div");
+        matchDiv.className = "match-card";
+        matchDiv.innerHTML = `
+          <p><strong>${match.sport}</strong>: ${match.team1} vs ${match.team2}</p>
+          <p>Type: ${match.type}</p>
+          <button onclick="editMatch('${match._id}', '${match.sport}')">Edit</button>
+          <button onclick="deleteMatch('${match._id}')">Delete</button>
+        `;
+        matchesDiv.appendChild(matchDiv);
+      });
+    }
+
+    async function deleteMatch(matchId) {
+      try {
+        await axios.delete(`${apiUrl}/matches/${matchId}`);
+        fetchMatches();
+      } catch (error) {
+        alert("Failed to delete match. Please try again.");
+      }
+    }
+
+    function editMatch(matchId, sport) {
+      let url = '';
+      if (sport === 'Badminton') {
+        url = `adminbadminton.html?matchId=${matchId}`;
+      } else if (sport === 'Football') {
+        url = `adminfootball.html?matchId=${matchId}`;
+      } else if (sport === 'Table Tennis') {
+        url = `admintabletennis.html?matchId=${matchId}`;
+      }
+      window.location.href = url;
+    }
+
+    fetchMatches();
+  </script>
+</body>
+</html>

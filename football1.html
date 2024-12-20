@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Football Scorecard</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: url('football-stadium-bg.jpg') no-repeat center center/cover;
+      color: white;
+      margin: 0;
+      padding: 0;
+    }
+    .scorecard-container {
+      max-width: 900px;
+      margin: 20px auto;
+      padding: 20px;
+      background: rgba(0, 0, 0, 0.8);
+      border-radius: 10px;
+      text-align: center;
+    }
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .team {
+      font-size: 1.5rem;
+      font-weight: bold;
+      width: 45%;
+    }
+    .score {
+      font-size: 2rem;
+    }
+    .timer {
+      font-size: 1.2rem;
+      margin: 10px 0;
+    }
+    .stats-table {
+      width: 100%;
+      margin: 20px 0;
+    }
+    .stats-table th, .stats-table td {
+      padding: 10px;
+      text-align: center;
+    }
+    .stats-table th {
+      background: #444;
+    }
+    .stats-table td {
+      background: #222;
+    }
+    .event-log {
+      text-align: left;
+      padding: 10px;
+      margin-top: 20px;
+      background: #333;
+      border-radius: 5px;
+    }
+    .event-log .event {
+      margin: 10px 0;
+      padding: 10px;
+      border-radius: 5px;
+    }
+    .event.yellow-card {
+      background: yellow;
+      color: black;
+    }
+    .event.red-card {
+      background: red;
+      color: white;
+    }
+  </style>
+</head>
+<body>
+  <div class="scorecard-container">
+    <div class="header">
+      <div class="team" id="team1-name">CSE</div>
+      <div class="score" id="score">0 - 0</div>
+      <div class="team" id="team2-name">IT</div>
+    </div>
+    <div class="timer" id="timer">00:00</div>
+    <table class="stats-table">
+      <thead>
+        <tr>
+          <th>Stats</th>
+          <th>CSE</th>
+          <th>IT</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Goals</td>
+          <td id="cse-goals">0</td>
+          <td id="it-goals">0</td>
+        </tr>
+        <tr>
+          <td>Yellow Cards</td>
+          <td id="cse-yellow">0</td>
+          <td id="it-yellow">0</td>
+        </tr>
+        <tr>
+          <td>Red Cards</td>
+          <td id="cse-red">0</td>
+          <td id="it-red">0</td>
+        </tr>
+        <tr>
+          <td>Possession (%)</td>
+          <td id="cse-possession">50</td>
+          <td id="it-possession">50</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="event-log" id="event-log">
+      <h3>Match Events</h3>
+    </div>
+  </div>
+  <script>
+    // Sample Data
+    const events = [
+      { minute: 15, team: 'CSE', type: 'goal', player: 'Player 1' },
+      { minute: 30, team: 'IT', type: 'yellow-card', player: 'Player 5' },
+      { minute: 45, team: 'CSE', type: 'red-card', player: 'Player 3' },
+      { minute: 60, team: 'IT', type: 'goal', player: 'Player 2' }
+    ];
+
+    // Initialize Stats
+    let stats = {
+      CSE: { goals: 0, yellow: 0, red: 0, possession: 50 },
+      IT: { goals: 0, yellow: 0, red: 0, possession: 50 }
+    };
+
+    // Update Event Log
+    function updateEventLog() {
+      const logContainer = document.getElementById('event-log');
+      events.forEach(event => {
+        const eventDiv = document.createElement('div');
+        eventDiv.className = `event ${event.type.replace('-', '')}`;
+        eventDiv.textContent = `${event.minute}': ${event.team} - ${event.type.replace('-', ' ')} by ${event.player}`;
+        logContainer.appendChild(eventDiv);
+
+        // Update Stats
+        if (event.type === 'goal') {
+          stats[event.team].goals++;
+        } else if (event.type === 'yellow-card') {
+          stats[event.team].yellow++;
+        } else if (event.type === 'red-card') {
+          stats[event.team].red++;
+        }
+      });
+    }
+
+    // Update Scorecard
+    function updateScorecard() {
+      document.getElementById('cse-goals').textContent = stats.CSE.goals;
+      document.getElementById('it-goals').textContent = stats.IT.goals;
+      document.getElementById('cse-yellow').textContent = stats.CSE.yellow;
+      document.getElementById('it-yellow').textContent = stats.IT.yellow;
+      document.getElementById('cse-red').textContent = stats.CSE.red;
+      document.getElementById('it-red').textContent = stats.IT.red;
+
+      document.getElementById('score').textContent = `${stats.CSE.goals} - ${stats.IT.goals}`;
+    }
+
+    // Initialize
+    updateEventLog();
+    updateScorecard();
+  </script>
+</body>
+</html>

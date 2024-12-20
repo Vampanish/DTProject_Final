@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sports Chatbot</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Chat container for bottom-right corner */
+        .chat-container {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 400px;
+            height: 500px;
+            background-color: #000000;
+            border-radius: 8px;
+            display: none;
+            flex-direction: column;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+        }
+
+        /* Chat box content */
+        .chat-box {
+            flex-grow: 1;
+            padding: 20px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            color: white;
+            background-color: #fbf2f2;
+            border-radius: 8px;
+        }
+
+        .chat-input {
+            border-top: 1px solid #555;
+            padding: 10px;
+            display: flex;
+        }
+
+        .chat-input input {
+            flex-grow: 1;
+            padding: 10px;
+            border: 1px solid #555;
+            border-radius: 4px;
+            margin-right: 10px;
+            background-color: #333;
+            color: white;
+        }
+
+        .chat-input button {
+            padding: 10px 20px;
+            background-color: #eb2d07;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .chat-input button:hover {
+            background-color: #eb2d07;
+        }
+
+        .message {
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 5px;
+            background-color: #f1f1f1;
+            max-width: 80%;
+            color: black;
+        }
+
+        .user-message {
+            background-color: #eb2d07;
+            align-self: flex-end;
+        }
+
+        .ai-message {
+            background-color: #3b3737;
+            align-self: flex-start;
+            color:#ffffff;
+        }
+
+        /* Chatbox Hover Icon */
+        .chat-toggle-icon {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 60px;
+            height: 60px;
+            background-color: #007bff;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            cursor: pointer;
+            font-size: 30px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+        }
+
+        /* Chatbox visible when toggled */
+        .chat-container.show {
+            display: flex;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Chatbox Container -->
+    <div class="chat-container" id="chat-container">
+        <div class="chat-box" id="chat-box"></div>
+        <div class="chat-input">
+            <input type="text" id="user-input" placeholder="Ask about sports..." />
+            <button onclick="sendMessage()">Send</button>
+        </div>
+    </div>
+
+    <!-- Chatbox Toggle Icon -->
+    <div class="chat-toggle-icon" onclick="toggleChatBox()">💬</div>
+
+    <script>
+        // Function to append a message to the chat box
+        function appendMessage(content, type) {
+            const chatBox = document.getElementById('chat-box');
+            const messageDiv = document.createElement('div');
+            messageDiv.classList.add('message');
+            messageDiv.classList.add(type === 'user' ? 'user-message' : 'ai-message');
+            messageDiv.textContent = content;
+            chatBox.appendChild(messageDiv);
+            chatBox.scrollTop = chatBox.scrollHeight; // Scroll to the latest message
+        }
+
+        // Function to send message to backend
+        async function sendMessage() {
+            const userInput = document.getElementById('user-input').value;
+
+            if (!userInput) {
+                return;
+            }
+
+            // Display the user's message
+            appendMessage(userInput, 'user');
+
+            // Clear the input field
+            document.getElementById('user-input').value = '';
+            if (userInput.toLowerCase() === "who is anish?" || userInput.toLowerCase() == "who is anish") {
+                appendMessage("Vampanish is my Maker", 'ai');
+                return;
+            }
+
+            try {
+                const response = await fetch('http://192.168.1.4:3000/chat', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ prompt: userInput })
+                });
+
+                const data = await response.json();
+                if (data.answer) {
+                    appendMessage(data.answer, 'ai'); // Display the AI's response
+                } else {
+                    appendMessage("Sorry, I have trouble answering your question.", 'ai'); // Default error response
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                appendMessage("Sorry, something went wrong. Please try again later.", 'ai');
+            }
+        }
+
+        // Toggle chatbox visibility
+        function toggleChatBox() {
+            const chatContainer = document.getElementById('chat-container');
+            chatContainer.classList.toggle('show');
+        }
+    </script>
+</body>
+</html>
