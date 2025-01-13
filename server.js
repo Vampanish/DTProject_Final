@@ -17,18 +17,39 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// Match Schema
+// Common Match Schema
 const matchSchema = new mongoose.Schema({
-  sport: String,
+  sport: String, // e.g., Football or Table Tennis
   type: { type: String, enum: ["live", "upcoming"] },
   team1: String,
   team2: String,
+  captain: {type:String,default:"CAPTAIN"},
   score1: { type: Number, default: 0 },
   score2: { type: Number, default: 0 },
-  date: String,
-  time: String,
+  date: { type: String, default: null },
+  time: { type: String, default: null },
   playersTeam1: { type: [String], default: [] },
+  individualscoreteam1: { type: [Number], default: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] },
+  individualscoreteam2: { type: [Number], default: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] },
+  individualfoulteam1: { type: [Number], default: [0,0,0,0,0,0,0,0,0,0,0,0,0,0] },
+  individualfoulteam2: { type: [Number], default: [0,0,0,0,0,0,0,0,0,0,0,0,0,0] },
   playersTeam2: { type: [String], default: [] },
+  status1: { type: [String], default: ["Active","Active","Active","Active","Active","Active","Active","Active","Active","Active","Active","Active","Active","Active","Active"] },
+  status2: { type: [String], default: ["Active","Active","Active","Active","Active","Active","Active","Active","Active","Active","Active","Active","Active","Active","Active"] },
+  goals1: { type: Number, default: 0 },
+  goals2: { type: Number, default: 0 },
+  yellowCards1: { type: Number, default: 0 },
+  yellowCards2: { type: Number, default: 0 },
+  redCards1: { type: Number, default: 0 },
+  redCards2: { type: Number, default: 0 },
+  cornerKicks1: { type: Number, default: 0 },
+  cornerKicks2: { type: Number, default: 0 },
+  freeKicks1: { type: Number, default: 0 },
+  freeKicks2: { type: Number, default: 0 },
+  penalties1: { type: Number, default: 0 },
+  penalties2: { type: Number, default: 0 },
+
+  // Table Tennis-Specific Fields
   set1_team1: { type: Number, default: 0 },
   set2_team1: { type: Number, default: 0 },
   set3_team1: { type: Number, default: 0 },
@@ -39,6 +60,18 @@ const matchSchema = new mongoose.Schema({
   set3_team2: { type: Number, default: 0 },
   set4_team2: { type: Number, default: 0 },
   set5_team2: { type: Number, default: 0 },
+
+  // New Fields
+  quarter: { type: Number, default: 1 }, // 1 for first quarter, 2 for second, etc.
+  half: { type: Number, default: 1 }, // 1 for first half, 2 for second half
+
+  // Jersey numbers for both teams (12 players)
+ 
+
+  // Match status (e.g., "active", "paused", "completed")
+  status: { type: String, default: "active" },
+
+  matchEvents: { type: String, default: "" },
 });
 
 const Match = mongoose.model("Match", matchSchema);
@@ -97,26 +130,41 @@ app.get("/api/matches/:id", async (req, res) => {
   }
 });
 
-// Add a match
+// Add a match (Football or Table Tennis)
 app.post("/api/matches", async (req, res) => {
   try {
-    const { playersTeam1 = [], playersTeam2 = [], ...rest } = req.body;
+    const {
+      sport,
+      type,
+      team1,
+      team2,
+      date,
+      time,
+      playersTeam1,
+      playersTeam2,
+      ...specificFields
+    } = req.body;
 
+    // Combine common match data and sport-specific data
     const matchData = {
-      ...rest,
-      playersTeam1: Array.isArray(playersTeam1)
-        ? playersTeam1.map((p) => p.trim()).filter((p) => p)
-        : [],
-      playersTeam2: Array.isArray(playersTeam2)
-        ? playersTeam2.map((p) => p.trim()).filter((p) => p)
-        : [],
+      sport,
+      type,
+      team1,
+      team2,
+      date: type === "upcoming" ? date : null,
+      time: type === "upcoming" ? time : null,
+      playersTeam1: playersTeam1 || [],
+      playersTeam2: playersTeam2 || [],
+      ...specificFields, // Additional fields for Football/Table Tennis
     };
 
+    // Save match to the common Match collection
     const match = new Match(matchData);
     const savedMatch = await match.save();
 
     res.status(201).json(savedMatch);
   } catch (error) {
+    console.error("Error saving match:", error);
     res.status(500).json({ error: "Error saving match" });
   }
 });
@@ -151,6 +199,7 @@ app.put("/api/matches/:id", async (req, res) => {
       return res.status(400).json({ error: "Invalid match ID" });
     }
 
+    // Update match with the entire request body without validating individual fields
     const updatedMatch = await Match.findByIdAndUpdate(id, req.body, { new: true });
 
     if (!updatedMatch) {
@@ -162,6 +211,7 @@ app.put("/api/matches/:id", async (req, res) => {
     res.status(500).json({ error: "Error updating match" });
   }
 });
+
 
 // Start the server
 const PORT = process.env.PORT || 8000;

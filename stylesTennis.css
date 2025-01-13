@@ -2,7 +2,7 @@
 body {
     font-family: Arial, sans-serif;
     margin: 0;
-    padding: 0;
+    padding: 25px;
     background-color: #000; /* Black background */
     color: #fff; /* Default text color for dark theme */
 }
@@ -48,7 +48,7 @@ body {
 }
 
 .score {
-    color: #000; /* Change score color to black */
+    color: #ffffff; /* Change score color to black */
     font-size: 36px; /* Increased font size */
     font-weight: bold; /* Make it bold for emphasis */
 }
@@ -271,7 +271,7 @@ table tr:nth-child(odd) {
 /* Chat container for bottom-right corner */
 .chat-container {
     position: fixed;
-    bottom: 20px;
+    bottom: 25px;
     right: 20px;
     width: 400px;
     height: 500px;
@@ -285,7 +285,7 @@ table tr:nth-child(odd) {
 /* Chat box content */
 .chat-box {
     flex-grow: 1;
-    padding: 20px;
+    padding: 25px;
     overflow-y: auto;
     display: flex;
     flex-direction: column;
@@ -364,4 +364,7 @@ table tr:nth-child(odd) {
 /* Chatbox visible when toggled */
 .chat-container.show {
     display: flex;
+}
+ul li {
+    margin-bottom: 8px; /* Adds spacing between players */
 }

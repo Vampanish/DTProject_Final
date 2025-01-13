@@ -3,8 +3,8 @@
     position: fixed;
     bottom: 80px; /* Raised up from the bottom to avoid the hover button */
     right: 20px;
-    width: 400px;
-    height: 300px;
+    width: 90%;
+    height: 50%;
     background-color: #1a1a1a; /* Darker background for contrast */
     border-radius: 8px;
     display: none;
@@ -16,7 +16,7 @@
 /* Chat header */
 .chat-header {
     background-color: #eb2d07; /* Bold red for the header */
-    
+        
     text-align: center;
     color: white;
     font-size: 18px;
@@ -103,11 +103,11 @@
 /* Chatbox Toggle Icon */
 .chat-toggle-icon {
     position: fixed;
-    bottom: 20px;
-    right: 20px;
+    bottom: 80px;
+    right: 40px;
     width: 60px;
     height: 60px;
-    background-color: #007bff;
+    background-color: #000000;
     border-radius: 50%;
     display: flex;
     justify-content: center;

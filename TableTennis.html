@@ -6,10 +6,12 @@
     <title>Table Tennis Scoresheet</title>
     <link rel="stylesheet" href="stylesTennis.css">
     <link rel="stylesheet" href="chatbox.css"> <!-- Link to the external chatbox CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script src="chat.js" defer></script>
     <script>
-        const API_BASE_URL = "http://192.168.1.4:8000/api"; // Replace with your API base URL
+        const API_BASE_URL = "http://192.168.1.5:8000/api"; // Replace with your API base URL
 
         function getQueryParams() {
             const params = new URLSearchParams(window.location.search);
@@ -80,21 +82,87 @@
         function goBack() {
             window.history.back();
         }
-    </script>
-    <style>
-        /* Ensure proper spacing between player names */
-        ul li {
-            margin-bottom: 8px; /* Adds spacing between players */
+        
+        function appendMessage(content, type) {
+            const chatBox = document.getElementById('chat-box');
+            const messageDiv = document.createElement('div');
+            messageDiv.classList.add('message');
+            messageDiv.classList.add(type === 'user' ? 'user-message' : 'ai-message');
+
+            messageDiv.textContent = content; // Insert plain text, including newlines
+            chatBox.appendChild(messageDiv);
+            chatBox.scrollTop = chatBox.scrollHeight; // Scroll to the latest message
         }
-    </style>
+
+        // Function to send message to backend
+        async function sendMessage() {
+            const userInput = document.getElementById('user-input').value;
+
+            if (!userInput) {
+                return;
+            }
+
+            // Display the user's message
+            appendMessage(userInput, 'user');
+
+            // Clear the input field
+            document.getElementById('user-input').value = '';
+            if (userInput.toLowerCase() === "who is anish?" || userInput.toLowerCase() == "who is anish") {
+                appendMessage("Vampanish is my Maker", 'ai');
+                return;
+            }
+
+            try {
+                const response = await fetch('http://192.168.1.5:3000/chat', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ prompt: userInput })
+                });
+
+                const data = await response.json();
+                if (data.answer) {
+                    appendMessage(data.answer, 'ai'); // Display the AI's response
+                } else {
+                    appendMessage("Sorry, I have trouble answering your question.", 'ai'); // Default error response
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                appendMessage("Sorry, something went wrong. Please try again later.", 'ai');
+            }
+        }
+
+        function toggleChatBox() {
+            const chatContainer = document.getElementById('chat-container');
+            chatContainer.classList.toggle('show');
+        }
+        function goBack() {
+            window.history.back();
+        }
+    </script>
+    
 </head>
 <body>
-    <div class="scoresheet-container">
-        <!-- Back Button with Arrow -->
-        <button onclick="goBack()" class="back-button">
-            &#8592; Back
-        </button>
+    <!-- New Header Section -->
+   <!-- College Header Section -->
+<!-- New Header Section -->
+<!-- College Header Section -->
+<div style="background-color: rgb(138, 41, 41); color: white; padding: 20px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); display: flex; align-items: center; justify-content: center;">
+    <!-- Logo on the left side -->
+    <img src="assests/logo.png" alt="TCE Logo" class="img-fluid" style="max-height: 70px; margin-right: 5%;">
+    
+    <!-- Text centered next to the logo -->
+    <div style="text-align: center;">
+        <h1 style="margin: 0; font-size: 36px;">THIAGARAJAR COLLEGE OF ENGINEERING</h1>
+        <h2 style="margin: 10px 0 0; font-size: 28px;">DEPARTMENT OF PHYSICAL EDUCATION</h2>
+    </div>
+</div>
 
+
+
+
+    <div class="scoresheet-container">
         <!-- Header Section -->
         <div class="header">
             <div class="dept-name" id="dept1">
@@ -157,62 +225,14 @@
     <!-- Chatbox Toggle Icon -->
     <div class="chat-toggle-icon" onclick="toggleChatBox()">💬</div>
 
-    <script>
-        // Function to append a message to the chat box
-        function appendMessage(content, type) {
-            const chatBox = document.getElementById('chat-box');
-            const messageDiv = document.createElement('div');
-            messageDiv.classList.add('message');
-            messageDiv.classList.add(type === 'user' ? 'user-message' : 'ai-message');
-            messageDiv.textContent = content;
-            chatBox.appendChild(messageDiv);
-            chatBox.scrollTop = chatBox.scrollHeight; // Scroll to the latest message
-        }
-
-        // Function to send message to backend
-        async function sendMessage() {
-            const userInput = document.getElementById('user-input').value;
-
-            if (!userInput) {
-                return;
-            }
-
-            // Display the user's message
-            appendMessage(userInput, 'user');
-
-            // Clear the input field
-            document.getElementById('user-input').value = '';
-            if (userInput.toLowerCase() === "who is anish?" || userInput.toLowerCase() == "who is anish") {
-                appendMessage("Vampanish is my Maker", 'ai');
-                return;
-            }
-
-            try {
-                const response = await fetch('http://192.168.1.4:3000/chat', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ prompt: userInput })
-                });
-
-                const data = await response.json();
-                if (data.answer) {
-                    appendMessage(data.answer, 'ai'); // Display the AI's response
-                } else {
-                    appendMessage("Sorry, I have trouble answering your question.", 'ai'); // Default error response
-                }
-            } catch (error) {
-                console.error('Error:', error);
-                appendMessage("Sorry, something went wrong. Please try again later.", 'ai');
-            }
-        }
-
-        // Toggle chatbox visibility
-        function toggleChatBox() {
-            const chatContainer = document.getElementById('chat-container');
-            chatContainer.classList.toggle('show');
-        }
-    </script>
+    <!-- Footer -->
+    <footer style="position: fixed; bottom: 0; left: 0; width: 100%; background-color: #292b2c; color: white; display: flex; justify-content: space-around; align-items: center; padding: 10px 20px; box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.2); z-index: 1000;">
+        <button onclick="location.href='userpage.html'" style="background-color: transparent; border: none; color: white; font-size: 24px; cursor: pointer; display: flex; align-items: center; justify-content: center;">
+            <i class="fas fa-home"></i> <!-- Home icon -->
+        </button>
+        <button onclick="goBack()" style="background-color: transparent; border: none; color: white; font-size: 24px; cursor: pointer; display: flex; align-items: center; justify-content: center;">
+            <i class="fas fa-arrow-left"></i> <!-- Back icon -->
+        </button>
+    </footer>
 </body>
 </html>

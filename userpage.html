@@ -1,226 +1,230 @@
-  <!DOCTYPE html>
-  <html lang="en">
-  <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Match Center</title>
-    <link
-      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css"
-      rel="stylesheet"
-    />
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
-    <style>
-      body {
-        background-color: #1f1b2e;
-        font-family: Arial, sans-serif;
-        margin: 0;
-        padding: 0;
-        color: #fff;
-      }
-      header {
-        background: #29253a;
-        color: #fff;
-        padding: 5px;
-        text-align: center;
-        position: relative;
-        font-size: 1.4rem;
-      }
-      header .btn {
-        position: absolute;
-        top: 50%;
-        right: 15px;
-        transform: translateY(-50%);
-        background: none;
-        border: none;
-        color: #fff;
-        font-size: 1.5rem;
-      }
-      .match-header {
-        color: #fff;
-        font-size: 1.2rem;
-        font-weight: bold;
-        padding: 10px 0;
-        text-align: center;
-        position: relative;
-      }
-      .match-header:after {
-        content: "";
-        display: block;
-        width: 100%;
-        height: 2px;
-        background: #5d5d5d;
-        margin-top: 5px;
-      }
-      .match-card {
-        background: linear-gradient(to right, #1e3c72, #2a5298);
-        color: #fff;
-        border-radius: 15px;
-        padding: 20px;
-        margin: 15px 0;
-        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-        text-decoration: none;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        transition: transform 0.2s, box-shadow 0.2s;
-      }
-      .match-card:hover {
-        transform: scale(1.03);
-        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
-      }
-      .match-card .team {
-        font-weight: bold;
-        font-size: 1.2rem;
-        text-transform: uppercase;
-        flex: 1;
-        text-align: center;
-      }
-      .match-card .score {
-        text-align: center;
-        font-size: 1.5rem;
-        font-weight: bold;
-        color: #fff;
-        margin: 0 15px;
-        flex-shrink: 0;
-      }
-      .footer-menu {
-        position: fixed;
-        bottom: 0;
-        width: 100%;
-        background: #29253a;
-        display: flex;
-        justify-content: space-around;
-        padding: 20px 0;
-        color: #fff;
-      }
-      .footer-menu a {
-        color: #fff;
-        text-decoration: none;
-        font-size: 1rem;
-        text-align: center;
-      }
-      .footer-menu a:hover {
-        color: #f39c12;
-      }
-    </style>
-  </head>
-  <body>
-    <!-- Header -->
-    <header>
-      <h1>Match Center</h1>
-      <button class="btn">
-        <i class="bi bi-bell"></i>
-      </button>
-    </header>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Match Center</title>
+  <link
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css"
+    rel="stylesheet"
+  />
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+  <style>
+    body {
+      background-color: #1f1b2e;
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding-top: 30px;
+      padding-bottom: 5%;
+      color: #fff;
+    }
+    header {
+      background: #29253a;
+      color: #fff;
+      padding: 5px;
+      text-align: center;
+      position: relative;
+      font-size: 1.4rem;
+    }
+    header .btn {
+      position: absolute;
+      top: 50%;
+      right: 15px;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      color: #fff;
+      font-size: 1.5rem;
+    }
+    .match-header {
+      color: #fff;
+      font-size: 1.2rem;
+      font-weight: bold;
+      padding: 10px 0;
+      text-align: center;
+      position: relative;
+    }
+    .match-header:after {
+      content: "";
+      display: block;
+      width: 100%;
+      height: 2px;
+      background: #5d5d5d;
+      margin-top: 5px;
+    }
+    .match-card {
+      background: linear-gradient(to right, #1e3c72, #2a5298);
+      color: #fff;
+      border-radius: 15px;
+      padding: 20px;
+      margin: 15px 0;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .match-card:hover {
+      transform: scale(1.03);
+      box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
+    }
+    .match-card .team {
+      font-weight: bold;
+      font-size: 1.2rem;
+      text-transform: uppercase;
+      flex: 1;
+      text-align: center;
+    }
+    .match-card .score {
+      text-align: center;
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: #fff;
+      margin: 0 15px;
+      flex-shrink: 0;
+    }
+    .footer-menu {
+      position: fixed;
+      bottom: 0;
+      width: 100%;
+      background: #29253a;
+      display: flex;
+      justify-content: space-around;
+      padding: 20px 0;
+      color: #fff;
+    }
+    .footer-menu a {
+      color: #fff;
+      text-decoration: none;
+      font-size: 1rem;
+      text-align: center;
+    }
+    .footer-menu a:hover {
+      color: #f39c12;
+    }
+  </style>
+</head>
+<body>
+  <!-- Header -->
+  <header>
+    <h1>THIAGARAJAR COLLEGE OF ENGINEERING</h1>
+    <h1>Match Center</h1>
+    <button class="btn">
+      <i class="bi bi-bell"></i>
+    </button>
+  </header>
 
-    <!-- Live Matches Section -->
-    <div class="container mt-4">
-      <section>
-        <h2 class="match-header">Live Matches</h2>
-        <div id="live-matches"></div>
-      </section>
+  <!-- Live Matches Section -->
+  <div class="container mt-4">
+    <section>
+      <h2 class="match-header">Live Matches</h2>
+      <div id="live-matches"></div>
+    </section>
 
-      <!-- Upcoming Matches Section -->
-      <section class="mt-4">
-        <h2 class="match-header">Upcoming Matches</h2>
-        <div id="upcoming-matches"></div>
-      </section>
-    </div>
+    <!-- Upcoming Matches Section -->
+    <section class="mt-4">
+      <h2 class="match-header">Upcoming Matches</h2>
+      <div id="upcoming-matches"></div>
+    </section>
+  </div>
 
-    <!-- Footer Menu -->
-    <footer class="footer-menu">
-      <a href="#">Search</a>
-      <a href="#">Home</a>
-      <a href="#">History</a>
-    </footer>
+  <!-- Footer Menu -->
+  <footer class="footer-menu">
+    <a href="#">Search</a>
+    <a href="#">Home</a>
+    <a href="#">History</a>
+  </footer>
 
-    <!-- Scripts -->
-    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-    <script>
-      const API_BASE_URL = "http://192.168.1.4:8000/api"; // Replace with your API base URL
+  <!-- Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <script>
+    const API_BASE_URL = "http://192.168.1.5:8000/api"; // Replace with your API base URL
 
-      // Fetch data from MongoDB Atlas
-      async function fetchMatches() {
-        try {
-          const liveMatchesResponse = await axios.get(`${API_BASE_URL}/matches/live-matches`);
-          const upcomingMatchesResponse = await axios.get(`${API_BASE_URL}/matches/upcoming-matches`);
+    // Fetch data from MongoDB Atlas
+    async function fetchMatches() {
+      try {
+        const liveMatchesResponse = await axios.get(`${API_BASE_URL}/matches/live-matches`);
+        const upcomingMatchesResponse = await axios.get(`${API_BASE_URL}/matches/upcoming-matches`);
 
-          const liveMatches = liveMatchesResponse.data;
-          const upcomingMatches = upcomingMatchesResponse.data;
+        const liveMatches = liveMatchesResponse.data;
+        const upcomingMatches = upcomingMatchesResponse.data;
 
-          renderLiveMatches(liveMatches);
-          renderUpcomingMatches(upcomingMatches);
-        } catch (error) {
-          console.error("Error fetching matches:", error);
-        }
+        renderLiveMatches(liveMatches);
+        renderUpcomingMatches(upcomingMatches);
+      } catch (error) {
+        console.error("Error fetching matches:", error);
       }
+    }
 
-      // Determine the target page based on the sport
-      function getTargetPage(sport) {
-        switch (sport) {
-          case "Football":
-            return "Football.html";
-          case "Badminton":
-            return "Badminton.html";
-          case "Table Tennis":
-            return "TableTennis.html";
-          default:
-            return "scoresheet.html";
-        }
+    // Determine the target page based on the sport
+    function getTargetPage(sport) {
+      switch (sport) {
+        case "Football":
+          return "Football.html";
+        case "Badminton":
+          return "Badminton.html";
+        case "Table Tennis":
+          return "TableTennis.html";
+        case "Basketball":
+          return "Basketball.html";
+        default:
+          return "scoresheet.html";
       }
+    }
 
-      // Render live matches
-      function renderLiveMatches(matches) {
-        const container = document.getElementById("live-matches");
-        container.innerHTML = "";  // Clear existing matches
+    // Render live matches
+    function renderLiveMatches(matches) {
+      const container = document.getElementById("live-matches");
+      container.innerHTML = "";  // Clear existing matches
 
-        matches.forEach((match) => {
-          const page = getTargetPage(match.sport);
+      matches.forEach((match) => {
+        const page = getTargetPage(match.sport);
 
-          const matchCard = `
-            <a href="${page}?matchId=${match._id}" 
-              class="match-card text-decoration-none">
-              <div class="team">${match.team1}</div>
-              <div class="score">
-                <div>${match.sport}</div>
-                <div>${match.score1} - ${match.score2}</div>
-              </div>
-              <div class="team">${match.team2}</div>
-            </a>
-          `;
-          container.innerHTML += matchCard; // Add new match cards to container
-        });
-      }
+        const matchCard = `
+          <a href="${page}?matchId=${match._id}" 
+            class="match-card text-decoration-none">
+            <div class="team">${match.team1}</div>
+            <div class="score">
+              <div>${match.sport}</div>
+              <div>${match.score1} - ${match.score2}</div>
+            </div>
+            <div class="team">${match.team2}</div>
+          </a>
+        `;
+        container.innerHTML += matchCard; // Add new match cards to container
+      });
+    }
 
-      // Render upcoming matches
-      function renderUpcomingMatches(matches) {
-        const container = document.getElementById("upcoming-matches");
-        container.innerHTML = ""; // Clear existing matches
+    // Render upcoming matches
+    function renderUpcomingMatches(matches) {
+      const container = document.getElementById("upcoming-matches");
+      container.innerHTML = ""; // Clear existing matches
 
-        matches.forEach((match) => {
-          const page = getTargetPage(match.sport);
+      matches.forEach((match) => {
+        const page = getTargetPage(match.sport);
 
-          const matchCard = `
-            <a href="${page}?matchId=${match._id}" 
-              class="match-card text-decoration-none">
-              <div class="team">${match.team1}</div>
-              <div class="score">
-                <div>${match.sport}</div>
-                <div>${match.date}</div>
-                <div>${match.time}</div>
-              </div>
-              <div class="team">${match.team2}</div>
-            </a>
-          `;
-          container.innerHTML += matchCard; // Add new upcoming match cards
-        });
-      }
+        const matchCard = `
+          <a href="${page}?matchId=${match._id}" 
+            class="match-card text-decoration-none">
+            <div class="team">${match.team1}</div>
+            <div class="score">
+              <div>${match.sport}</div>
+              <div>${match.date}</div>
+              <div>${match.time}</div>
+            </div>
+            <div class="team">${match.team2}</div>
+          </a>
+        `;
+        container.innerHTML += matchCard; // Add new upcoming match cards
+      });
+    }
 
-      // Fetch matches when the page loads
-      fetchMatches();
+    // Fetch matches when the page loads
+    fetchMatches();
 
-      // Automatic refresh every 3 seconds to update matches
-      setInterval(fetchMatches, 3000); // You can increase the time interval to optimize performance
-    </script>
-  </body>
-  </html>
+    // Automatic refresh every 3 seconds to update matches
+    setInterval(fetchMatches, 3000); // You can increase the time interval to optimize performance
+  </script>
+</body>
+</html>

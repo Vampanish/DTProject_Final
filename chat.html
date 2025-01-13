@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sports Chatbot</title>
+    <!-- Adding Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-KyZXEJp3QhqLMpG8r+Knujsf5fVjeUX5zY0JvFBoW4hjX0eA1sfjD6YbPqxZzmWl" crossorigin="anonymous">
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -12,7 +14,6 @@
             padding: 0;
         }
 
-        /* Chat container for bottom-right corner */
         .chat-container {
             position: fixed;
             bottom: 20px;
@@ -24,9 +25,9 @@
             display: none;
             flex-direction: column;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+            z-index: 10;
         }
 
-        /* Chat box content */
         .chat-box {
             flex-grow: 1;
             padding: 20px;
@@ -36,6 +37,7 @@
             color: white;
             background-color: #fbf2f2;
             border-radius: 8px;
+            min-height: 200px;
         }
 
         .chat-input {
@@ -64,7 +66,7 @@
         }
 
         .chat-input button:hover {
-            background-color: #eb2d07;
+            background-color: #d12606;
         }
 
         .message {
@@ -84,10 +86,9 @@
         .ai-message {
             background-color: #3b3737;
             align-self: flex-start;
-            color:#ffffff;
+            color: #ffffff;
         }
 
-        /* Chatbox Hover Icon */
         .chat-toggle-icon {
             position: fixed;
             bottom: 20px;
@@ -103,30 +104,53 @@
             cursor: pointer;
             font-size: 30px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+            z-index: 5;
         }
 
-        /* Chatbox visible when toggled */
         .chat-container.show {
             display: flex;
+        }
+
+        .chat-close-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: transparent;
+            color: white;
+            border: none;
+            font-size: 20px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .chat-close-btn:hover {
+            color: #d12606;
         }
     </style>
 </head>
 <body>
 
-    <!-- Chatbox Container -->
+    <!-- Chat Container -->
     <div class="chat-container" id="chat-container">
+        <!-- Close Button -->
+        <button class="chat-close-btn" onclick="closeChatBox()">×</button>
+
         <div class="chat-box" id="chat-box"></div>
         <div class="chat-input">
-            <input type="text" id="user-input" placeholder="Ask about sports..." />
-            <button onclick="sendMessage()">Send</button>
+            <input type="text" id="user-input" class="form-control" placeholder="Ask about sports..." />
+            <button onclick="sendMessage()" class="btn btn-primary">Send</button>
         </div>
     </div>
 
-    <!-- Chatbox Toggle Icon -->
+    <!-- Chat Toggle Icon -->
     <div class="chat-toggle-icon" onclick="toggleChatBox()">💬</div>
 
+    <!-- Adding Bootstrap JS and dependencies -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js" integrity="sha384-pzjw8f+ua7Kw1TIq0+Vh6SKz5A5Yh5jStFqZT1yOGH6kFjC5lN9vU0RIzzJ8TxaH" crossorigin="anonymous"></script>
+
     <script>
-        // Function to append a message to the chat box
+        let isFirstTimeOpen = true;
+
         function appendMessage(content, type) {
             const chatBox = document.getElementById('chat-box');
             const messageDiv = document.createElement('div');
@@ -134,10 +158,9 @@
             messageDiv.classList.add(type === 'user' ? 'user-message' : 'ai-message');
             messageDiv.textContent = content;
             chatBox.appendChild(messageDiv);
-            chatBox.scrollTop = chatBox.scrollHeight; // Scroll to the latest message
+            chatBox.scrollTop = chatBox.scrollHeight;
         }
 
-        // Function to send message to backend
         async function sendMessage() {
             const userInput = document.getElementById('user-input').value;
 
@@ -145,18 +168,16 @@
                 return;
             }
 
-            // Display the user's message
             appendMessage(userInput, 'user');
-
-            // Clear the input field
             document.getElementById('user-input').value = '';
-            if (userInput.toLowerCase() === "who is anish?" || userInput.toLowerCase() == "who is anish") {
+
+            if (userInput.toLowerCase() === "who is anish?" || userInput.toLowerCase() === "who is anish") {
                 appendMessage("Vampanish is my Maker", 'ai');
                 return;
             }
 
             try {
-                const response = await fetch('http://192.168.1.4:3000/chat', {
+                const response = await fetch('http://192.168.1.5:3000/chat', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -166,9 +187,9 @@
 
                 const data = await response.json();
                 if (data.answer) {
-                    appendMessage(data.answer, 'ai'); // Display the AI's response
+                    appendMessage(data.answer, 'ai');
                 } else {
-                    appendMessage("Sorry, I have trouble answering your question.", 'ai'); // Default error response
+                    appendMessage("Sorry, I have trouble answering your question.", 'ai');
                 }
             } catch (error) {
                 console.error('Error:', error);
@@ -176,10 +197,19 @@
             }
         }
 
-        // Toggle chatbox visibility
         function toggleChatBox() {
             const chatContainer = document.getElementById('chat-container');
             chatContainer.classList.toggle('show');
+
+            if (isFirstTimeOpen && chatContainer.classList.contains('show')) {
+                appendMessage("Hi! I'm SPORTBOT for the TCE SportsCard app. Ask me any sports-related question!", 'ai');
+                isFirstTimeOpen = false;
+            }
+        }
+
+        function closeChatBox() {
+            const chatContainer = document.getElementById('chat-container');
+            chatContainer.classList.remove('show');
         }
     </script>
 </body>

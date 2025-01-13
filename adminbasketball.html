@@ -4,310 +4,412 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Basketball Match Scoresheet</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
   <style>
     body {
       font-family: Arial, sans-serif;
       margin: 0;
       padding: 0;
-      background-color: #f4f4f9;
+      background-color: #fff;
+      color: #333;
     }
 
-    .container {
-      max-width: 900px;
-      margin: 20px auto;
-      background: white;
+    .header {
+      display: flex;
+      align-items: center;
+      justify-content: center;
       padding: 20px;
-      border-radius: 10px;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      background-color: #4CAF50;
+      color: white;
+    }
+
+    .header img {
+      height: 60px;
+      margin-right: 20px;
+    }
+
+    .college-header {
+      font-size: 24px;
+      font-weight: bold;
+      margin: 0;
+    }
+
+    .department-header {
+      font-size: 20px;
+      font-style: italic;
+      margin: 0;
     }
 
     h1 {
       text-align: center;
+      font-size: 32px;
+      color: #333;
+      margin-top: 20px;
+    }
+
+    .scores {
+      text-align: center;
+      margin-bottom: 10px;
+    }
+
+    .scores h2 {
+      font-size: 28px;
+      margin: 5px 0;
       color: #333;
     }
 
-    .timer {
-      text-align: center;
-      font-size: 20px;
-      margin: 20px 0;
-      padding: 10px;
-      background-color: #f8f9fa;
-      border-radius: 5px;
-      font-weight: bold;
-    }
-
-    .controls {
-      text-align: center;
-      margin-bottom: 20px;
-    }
-
-    .controls button {
-      margin: 5px;
-      padding: 10px 20px;
-      font-size: 16px;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-    }
-
-    .controls .start-btn {
-      background-color: #4caf50;
-      color: white;
-    }
-
-    .controls .stop-btn {
-      background-color: #d9534f;
-      color: white;
-    }
-
-    .controls .reset-btn {
-      background-color: #ff9800;
-      color: white;
-    }
-
-    .quarter-info {
-      text-align: center;
-      font-size: 18px;
-      margin-top: 10px;
-    }
-
-    .team-section {
-      margin-bottom: 30px;
-    }
-
-    .team-header {
-      font-size: 20px;
-      color: #555;
-      margin-bottom: 10px;
-    }
-
-    .scoresheet-table {
-      width: 100%;
+    table {
+      width: 90%;
+      margin: 20px auto;
       border-collapse: collapse;
-      margin-bottom: 10px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      background: #fff;
+      border-radius: 8px;
     }
 
-    .scoresheet-table th, .scoresheet-table td {
+    th, td {
+      padding: 12px;
       text-align: center;
-      padding: 8px;
       border: 1px solid #ddd;
     }
 
-    .scoresheet-table th {
-      background-color: #4caf50;
+    th {
+      background-color: #4CAF50;
       color: white;
     }
 
-    .summary {
-      font-weight: bold;
-      text-align: center;
-      margin: 10px 0;
+    td {
+      font-size: 14px;
     }
+    
 
-    .submit-btn {
-      display: block;
-      margin: 20px auto;
-      background-color: #4caf50;
-      color: white;
+    .actions button {
+      margin: 5px;
+      padding: 8px 12px;
       border: none;
-      padding: 10px 20px;
-      font-size: 16px;
-      border-radius: 5px;
+      background-color: #4CAF50;
+      color: white;
       cursor: pointer;
+      border-radius: 4px;
+      transition: background 0.3s;
     }
+    body::after {
+            content: ""; /* Empty content for the watermark */
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('assests/logo.png'); /* Add your watermark image URL */
+            background-position: center;
+            background-repeat: no-repeat;
+            background-size: contain; /* Adjust the image size to fit the page */
+            opacity: 0.1; /* Adjust opacity to make the watermark subtle */
+            pointer-events: none; /* Ensure the watermark doesn’t interfere with clicks on the page */
+            z-index: -1; /* Keeps the watermark behind the text */
+        }
 
-    .submit-btn:hover {
+    .actions button:hover {
       background-color: #45a049;
     }
 
-    .warning {
-      color: red;
-      font-size: 14px;
-      margin-top: 5px;
+    .container {
+      width: 90%;
+      margin: 0 auto;
+      padding: 20px;
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .team-container {
+      margin-bottom: 20px;
+    }
+
+    .team-container h2 {
+      text-align: center;
+      color: #4CAF50;
     }
   </style>
 </head>
 <body>
-  <div class="container">
-    <h1>Basketball Match Scoresheet</h1>
-
-    <!-- Timer Section -->
-    <div class="timer" id="timer">Time: 00:00</div>
-    <div class="controls">
-      <button class="start-btn" onclick="startTimer()">Start Timer</button>
-      <button class="stop-btn" onclick="stopTimer()">Stop Timer</button>
-      <button class="reset-btn" onclick="resetTimer()">Reset Timer</button>
+  <div class="header">
+    <img src="assests/logo.png" alt="College Logo">
+    <div>
+      <p class="college-header">Thiagarajar College of Engineering</p>
+      <p class="department-header">Department of Physical Education</p>
     </div>
-
-    <!-- Quarter and Half Information -->
-    <div class="quarter-info" id="quarter-info">Quarter: 1 | Half: 1</div>
-
-    <!-- Team 1 Section -->
-    <div class="team-section">
-      <div class="team-header">Team 1</div>
-      <table class="scoresheet-table">
-        <thead>
-          <tr>
-            <th>Jersey Number</th>
-            <th>Player Name</th>
-            <th>Points</th>
-            <th>Fouls</th>
-            <th>Individual Score</th>
-          </tr>
-        </thead>
-        <tbody id="team1-body">
-          <!-- Rows will be added dynamically -->
-        </tbody>
-      </table>
-      <button onclick="addPlayerRow('team1-body', 'team1')">Add Player</button>
-      <div class="summary">Total Score: <span id="team1-score">0</span></div>
-      <div class="summary">Total Fouls: <span id="team1-fouls">0</span></div>
-    </div>
-
-    <!-- Team 2 Section -->
-    <div class="team-section">
-      <div class="team-header">Team 2</div>
-      <table class="scoresheet-table">
-        <thead>
-          <tr>
-            <th>Jersey Number</th>
-            <th>Player Name</th>
-            <th>Points</th>
-            <th>Fouls</th>
-            <th>Individual Score</th>
-          </tr>
-        </thead>
-        <tbody id="team2-body">
-          <!-- Rows will be added dynamically -->
-        </tbody>
-      </table>
-      <button onclick="addPlayerRow('team2-body', 'team2')">Add Player</button>
-      <div class="summary">Total Score: <span id="team2-score">0</span></div>
-      <div class="summary">Total Fouls: <span id="team2-fouls">0</span></div>
-    </div>
-
-    <!-- Submit Button -->
-    <button class="submit-btn" onclick="submitScoresheet()">Submit Scoresheet</button>
   </div>
 
-  <audio id="buzzer" src="https://www.soundjay.com/button/beep-07.wav" preload="auto"></audio>
+  <h1>Basketball Match Scoresheet</h1>
 
+  <!-- Display Team Names and Scores -->
+  <div class="scores">
+    <h2 id="matchTitle">Team 1 vs Team 2</h2>
+    <h2 id="matchScore">0 - 0</h2>
+  </div>
+
+  <!-- Team 1 Container -->
+  <div class="team-container">
+    <h2 id="team1Title">Team 1</h2>
+    <div class="container">
+      <table id="team1Table">
+        <tr>
+          <th>Name</th>
+          <th>Jersey Number</th>
+          <th>Fouls</th>
+          <th>Individual Score</th>
+          <th>Points</th>
+          <th>Activity Status</th> <!-- Added column for Activity Status -->
+        </tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- Team 2 Container -->
+  <div class="team-container">
+    <h2 id="team2Title">Team 2</h2>
+    <div class="container">
+      <table id="team2Table">
+        <tr>
+          <th>Name</th>
+          <th>Jersey Number</th>
+          <th>Fouls</th>
+          <th>Individual Score</th>
+          <th>Points</th>
+          <th>Activity Status</th> <!-- Added column for Activity Status -->
+        </tr>
+      </table>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
   <script>
-    let timerInterval;
-    let time = 0;
-    let quarter = 1;
-    let half = 1;
+    const API_BASE_URL = "http://192.168.1.5:8000/api";
 
-    // Start the timer
-    function startTimer() {
-      stopTimer(); // Stop any previous timer
-      timerInterval = setInterval(() => {
-        time++;
-        const minutes = String(Math.floor(time / 60)).padStart(2, '0');
-        const seconds = String(time % 60).padStart(2, '0');
-        document.getElementById('timer').textContent = Time: ${minutes}:${seconds};
+    async function fetchMatchDetails(matchId) {
+  try {
+    const response = await axios.get(`${API_BASE_URL}/matches/${matchId}`);
+    const match = response.data;
 
-        if (time >= 600) { // 10 minutes buzzer
-          playBuzzer();
-          nextQuarter();
-        }
-      }, 1000);
-    }
+    // Update match title and score
+    document.getElementById("matchTitle").textContent = `${match.team1} vs ${match.team2}`;
+    document.getElementById("matchScore").textContent = `${match.score1} - ${match.score2}`;
 
-    // Stop the timer
-    function stopTimer() {
-      clearInterval(timerInterval);
-    }
+    // Update team names
+    document.getElementById("team1Title").textContent = match.team1;
+    document.getElementById("team2Title").textContent = match.team2;
 
-    // Play buzzer sound
-    function playBuzzer() {
-      const buzzer = document.getElementById("buzzer");
-      buzzer.play();
-    }
+    const team1Table = document.getElementById("team1Table");
+    const team2Table = document.getElementById("team2Table");
 
-    // Move to the next quarter
-    function nextQuarter() {
-      if (quarter < 4) {
-        quarter++;
-        if (quarter === 3) {
-          half = 2;
-        }
-        time = 0; // Reset the timer for the next quarter
-        updateQuarterInfo();
-        startTimer(); // Restart the timer for the next quarter
-      }
-    }
+    // Clear existing rows
+    team1Table.innerHTML = "<tr><th>Name</th><th>Jersey Number</th><th>Fouls</th><th>Individual Score</th><th>Points</th><th>Activity Status</th></tr>";
+    team2Table.innerHTML = "<tr><th>Name</th><th>Jersey Number</th><th>Fouls</th><th>Individual Score</th><th>Points</th><th>Activity Status</th></tr>";
 
-    // Update the quarter and half info display
-    function updateQuarterInfo() {
-      const quarterInfo = document.getElementById('quarter-info');
-      quarterInfo.textContent = Quarter: ${quarter} | Half: ${half};
-    }
+    // Helper function to create point buttons
+    function createPointButtons(team, playerIndex) {
+      const container = document.createElement('div');
+      container.classList.add('actions');
 
-    // Add a player row dynamically
-    function addPlayerRow(teamId, team) {
-      const tbody = document.getElementById(teamId);
-      const row = document.createElement("tr");
-      row.innerHTML = `
-        <td><input type="number" placeholder="Jersey #" /></td>
-        <td><input type="text" placeholder="Player Name" /></td>
-        <td><input type="number" placeholder="Points" onchange="updateTeamTotals('${team}')" /></td>
-        <td><input type="number" placeholder="Fouls" onchange="updateTeamTotals('${team}')" /></td>
-        <td><span class="individual-score">0</span></td>
-      `;
-      tbody.appendChild(row);
-    }
+      [1, 2, 3].forEach((points) => {
+        const button = document.createElement('button');
+        button.textContent = `${points}`;
+        button.addEventListener('click', async () => {
+          if (team === 1) {
+            match.individualscoreteam1[playerIndex] += points;
+            match.score1 += points;
+          } else {
+            match.individualscoreteam2[playerIndex] += points;
+            match.score2 += points;
+          }
 
-    // Update team totals
-    function updateTeamTotals(team) {
-      const teamBody = document.getElementById(${team}-body);
-      const rows = teamBody.querySelectorAll("tr");
-      let totalPoints = 0;
-      let totalFouls = 0;
+          // Update match data on the server
+          await axios.put(`${API_BASE_URL}/matches/${matchId}`, {
+            score1: match.score1,
+            score2: match.score2,
+            individualscoreteam1: match.individualscoreteam1,
+            individualscoreteam2: match.individualscoreteam2,
+          });
 
-      rows.forEach(row => {
-        const pointsInput = row.querySelector("input:nth-child(3)");
-        const foulsInput = row.querySelector("input:nth-child(4)");
-        const points = parseInt(pointsInput.value) || 0;
-        const fouls = parseInt(foulsInput.value) || 0;
-
-        // Check if points are within the allowed range
-        if (points < 1 || points > 3) {
-          alert("Points must be between 1 and 3!");
-          pointsInput.value = '';
-        }
-
-        // Check for fouls exceeding the limit
-        if (fouls > 5) {
-          row.querySelector(".individual-score").textContent = "FOUL OUT";
-        } else {
-          row.querySelector(".individual-score").textContent = points;
-        }
-
-        totalPoints += points;
-        totalFouls += fouls;
+          // Refresh match details
+          fetchMatchDetails(matchId);
+        });
+        container.appendChild(button);
       });
 
-      document.getElementById(${team}-score).textContent = totalPoints;
-      document.getElementById(${team}-fouls).textContent = totalFouls;
+      return container;
     }
 
-    // Submit scoresheet
-    function submitScoresheet() {
-      alert("Scoresheet submitted successfully!");
-      stopTimer(); // Stop the timer
-    }
+    // Helper function to create foul button
+    function createFoulButton(team, playerIndex) {
+  const button = document.createElement('button');
+  button.textContent = "Add Foul";
+  button.style.backgroundColor = "#4CAF50"; /* Inline CSS for green color */
+  button.style.color = "white";
+  button.style.borderRadius = "4px";
+  button.style.marginLeft = "10px"; /* Add spacing */
 
-    // Reset Timer with confirmation
-    function resetTimer() {
-      if (confirm("Are you sure you want to reset the timer? This will start a new game.")) {
-        time = 0;
-        quarter = 1;
-        half = 1;
-        clearInterval(timerInterval); // Clear any active timer
-        updateQuarterInfo(); // Update the quarter and half info
+  button.addEventListener('click', async () => {
+    if (team === 1) {
+      match.individualfoulteam1[playerIndex]++;
+      if (match.individualfoulteam1[playerIndex] >= 5) {
+        match.status1[playerIndex] = "Fouled Out";
+      }
+    } else {
+      match.individualfoulteam2[playerIndex]++;
+      if (match.individualfoulteam2[playerIndex] >= 5) {
+        match.status2[playerIndex] = "Fouled Out";
       }
     }
+
+    // Update match data on the server
+    await axios.put(`${API_BASE_URL}/matches/${matchId}`, {
+      individualfoulteam1: match.individualfoulteam1,
+      individualfoulteam2: match.individualfoulteam2,
+      status1: match.status1,
+      status2: match.status2,
+    });
+
+    // Refresh match details
+    fetchMatchDetails(matchId);
+  });
+  return button;
+}
+
+
+    // Disable editing for fouled-out players
+    function disableRow(row) {
+      row.querySelectorAll("button").forEach((button) => {
+        button.disabled = true;
+      });
+    }
+
+    // Populate Team 1 Data
+    match.playersTeam1.forEach((player, index) => {
+      const [name, jersey] = player.split(' ');
+      const row = team1Table.insertRow();
+      row.insertCell(0).textContent = name;
+      row.insertCell(1).textContent = jersey;
+
+      // Add fouls
+      const foulCell = row.insertCell(2);
+      foulCell.textContent = match.individualfoulteam1[index] || 0;
+      foulCell.appendChild(createFoulButton(1, index));
+
+      // Add individual score
+      row.insertCell(3).textContent = match.individualscoreteam1[index] || 0;
+
+      // Add point buttons
+      const pointsCell = row.insertCell(4);
+      pointsCell.appendChild(createPointButtons(1, index));
+
+      // Add activity status
+      const statusCell = row.insertCell(5);
+      statusCell.textContent = match.status1[index] || "Active";
+      if (match.status1[index] === "Fouled Out") {
+        statusCell.style.color = "red";
+        disableRow(row);
+      } else {
+        statusCell.style.color = "green";
+      }
+    });
+
+    // Populate Team 2 Data
+    match.playersTeam2.forEach((player, index) => {
+      const [name, jersey] = player.split(' ');
+      const row = team2Table.insertRow();
+      row.insertCell(0).textContent = name;
+      row.insertCell(1).textContent = jersey;
+
+      // Add fouls
+      const foulCell = row.insertCell(2);
+      foulCell.textContent = match.individualfoulteam2[index] || 0;
+      foulCell.appendChild(createFoulButton(2, index));
+
+      // Add individual score
+      row.insertCell(3).textContent = match.individualscoreteam2[index] || 0;
+
+      // Add point buttons
+      const pointsCell = row.insertCell(4);
+      pointsCell.appendChild(createPointButtons(2, index));
+
+      // Add activity status
+      const statusCell = row.insertCell(5);
+      statusCell.textContent = match.status2[index] || "Active";
+      if (match.status2[index] === "Fouled Out") {
+        statusCell.style.color = "red";
+        disableRow(row);
+      } else {
+        statusCell.style.color = "green";
+      }
+    });
+  } catch (error) {
+    console.error("Error fetching match details:", error);
+  }
+}
+
+// Get matchId from URL parameters
+const urlParams = new URLSearchParams(window.location.search);
+const matchId = urlParams.get('matchId');
+
+if (matchId) {
+  fetchMatchDetails(matchId);
+
+  // Update data every 2 seconds
+  setInterval(() => {
+    fetchMatchDetails(matchId);
+  }, 2000);
+} else {
+  console.error("matchId not found in URL parameters");
+}
+async function finishGame() {
+  const urlParams = new URLSearchParams(window.location.search);
+  const matchId = urlParams.get('matchId');
+  
+  if (!matchId) {
+    alert("No matchId provided!");
+    return;
+  }
+
+  const currentScore = document.getElementById("matchScore").textContent.split(" - ");
+  const team1Score = parseInt(currentScore[0]);
+  const team2Score = parseInt(currentScore[1]);
+
+  let result;
+  if (team1Score > team2Score) {
+    result = `Winner: Team 1 (${team1Score} - ${team2Score})`;
+  } else if (team2Score > team1Score) {
+    result = `Winner: Team 2 (${team2Score} - ${team1Score})`;
+  } else {
+    result = "Match Drawn";
+  }
+
+  try {
+    // Update the result in the database
+    await axios.put(`${API_BASE_URL}/matches/${matchId}`, { result });
+
+    // Notify the user
+    alert(result);
+
+    // Refresh match details to reflect the result
+    await fetchMatchDetails(matchId);
+
+    // Delete the match from the database
+    await axios.delete(`${API_BASE_URL}/matches/${matchId}`);
+
+    // Redirect to admin page
+    window.location.replace("adminpage.html");
+  } catch (error) {
+    console.error("Error finishing the game:", error);
+    alert("Unable to finish the game. Please try again later.");
+  }
+}
+
+
   </script>
+  <button id="finish-game" onclick="finishGame()"  style="background-color: #28a745; color: white; font-size: 24px; padding: 15px 30px; border: none; border-radius: 10px; cursor: pointer; width: 100%; max-width: 300px; text-align: center;">
+    Finish Game
+</button>
 </body>
 </html>
