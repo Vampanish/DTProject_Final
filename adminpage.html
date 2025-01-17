@@ -40,12 +40,6 @@
       width: 100%;
       font-size: 1rem;
     }
-
-    /* Custom styles for placeholder in select */
-    select option[disabled] {
-      color: #d1d1d1; /* Light grey color */
-    }
-
     .footer-menu {
       position: fixed;
       bottom: 0;
@@ -71,19 +65,17 @@
     button:hover {
       background-color: #ff4e5f;
     }
-    .player-fields {
+    .fields {
       display: flex;
       flex-direction: column;
       gap: 10px;
     }
-
-    .player-field input {
-      width: 90%; /* Make the input smaller */
+    .field input {
+      width: 90%;
       padding: 10px;
       margin-right: 10px;
     }
-
-    .player-field button {
+    .field button {
       padding: 10px;
       background-color: #ff6e7f;
       color: #fff;
@@ -91,8 +83,7 @@
       cursor: pointer;
       font-size: 0.9rem;
     }
-
-    .player-field button:hover {
+    .field button:hover {
       background-color: #ff4e5f;
     }
   </style>
@@ -100,7 +91,6 @@
 <body>
   <h1>Admin Match Management</h1>
 
-  <!-- Form to Add/Update Matches -->
   <div class="match-form">
     <h2>Add New Match</h2>
     <form id="matchForm">
@@ -114,7 +104,6 @@
         <option value="Tennis">Tennis</option>
         <option value="Hockey">Hockey</option>
         <option value="Volleyball">Volleyball</option>
-
       </select><br><br>
 
       <label for="type">Match Type:</label>
@@ -137,117 +126,106 @@
         <input type="time" id="time" name="time"><br><br>
       </div>
 
-      <!-- Players for both teams -->
-      <div id="playerFields" style="display: none;">
+      <div id="fields">
+        <h3>Referees</h3>
+        <div id="referees" class="fields"></div>
+        <button type="button" onclick="addField('referees', 'Referee Name')">+ Add Referee</button><br><br>
+
+        <h3>Team 1 Coaches</h3>
+        <div id="team1Coaches" class="fields"></div>
+        <button type="button" onclick="addField('team1Coaches', 'Coach Name')">+ Add Coach</button><br><br>
+
+        <h3>Team 2 Coaches</h3>
+        <div id="team2Coaches" class="fields"></div>
+        <button type="button" onclick="addField('team2Coaches', 'Coach Name')">+ Add Coach</button><br><br>
+
         <h3>Team 1 Players</h3>
-        <div id="team1Players" class="player-fields"></div>
-        <button type="button" onclick="addPlayerField('team1Players')">+ Add Player</button><br><br>
+        <div id="team1Players" class="fields"></div>
+        <button type="button" onclick="addField('team1Players', 'Player Name')">+ Add Player</button><br><br>
 
         <h3>Team 2 Players</h3>
-        <div id="team2Players" class="player-fields"></div>
-        <button type="button" onclick="addPlayerField('team2Players')">+ Add Player</button><br><br>
+        <div id="team2Players" class="fields"></div>
+        <button type="button" onclick="addField('team2Players', 'Player Name')">+ Add Player</button><br><br>
       </div>
 
       <button type="submit">Submit</button>
     </form>
   </div>
 
-  <!-- List of Matches -->
   <div class="match-list">
     <h2>Manage Matches</h2>
     <div id="matches"></div>
   </div>
-  <script>
-  const apiUrl = "http://192.168.1.4:8000/api"; // Adjust API URL as needed
 
-  document.getElementById("type").addEventListener("change", (e) => {
-    const type = e.target.value;
-    document.getElementById("upcomingFields").style.display = type === "upcoming" ? "block" : "none";
-  });
-  
-  document.getElementById("sport").addEventListener("change", (e) => {
-    const sport = e.target.value;
-    const playerFields = document.getElementById("playerFields");
-  
-    if (sport === "Basketbuallyt") {
-      playerFields.style.display = "none"; // Hide player fields for Football and Basketball
-    } else {
-      playerFields.style.display = "block"; // Show player fields for Table Tennis and Badminton
+  <script>
+    const apiUrl = "http://192.168.1.4:8000/api";
+
+    document.getElementById("type").addEventListener("change", (e) => {
+      const type = e.target.value;
+      document.getElementById("upcomingFields").style.display = type === "upcoming" ? "block" : "none";
+    });
+
+    function addField(containerId, placeholder) {
+      const container = document.getElementById(containerId);
+      const fieldDiv = document.createElement("div");
+      fieldDiv.className = "field";
+      fieldDiv.innerHTML = `
+        <input type="text" placeholder="${placeholder}" required>
+        <button type="button" onclick="removeField(this)">Remove</button>
+      `;
+      container.appendChild(fieldDiv);
     }
-  });
-  
-  function addPlayerField(teamId) {
-    const container = document.getElementById(teamId);
-    const maxPlayers = document.getElementById("sport").value === "Badminton" || document.getElementById("sport").value === "Table Tennis" ? 2 : 11;
-  
-    if (container.children.length >= maxPlayers) {
-      alert(`Maximum ${maxPlayers} players allowed for this sport.`);
-      return;
+
+    function removeField(button) {
+      button.parentElement.remove();
     }
-  
-    const playerDiv = document.createElement("div");
-    playerDiv.className = "player-field";
-    playerDiv.innerHTML = `
-      <input type="text" placeholder="Player Name and Jersey Number" required>
-      <button type="button" onclick="removePlayerField(this)">Remove</button>
-    `;
-    container.appendChild(playerDiv);
-  }
-  
-  function removePlayerField(button) {
-    button.parentElement.remove();
-  }
-  
-  document.getElementById("matchForm").addEventListener("submit", async (e) => {
-    e.preventDefault();
-  
-    const sport = document.getElementById("sport").value;
-    const type = document.getElementById("type").value;
-    const team1 = document.getElementById("team1").value.trim();
-    const team2 = document.getElementById("team2").value.trim();
-  
-    if (!sport || !type) {
-      alert("Please select a sport and match type.");
-      return;
-    }
-  
-    if (team1 === team2) {
-      alert("Team 1 and Team 2 cannot be the same.");
-      return;
-    }
-  
-    const team1Players = Array.from(document.querySelectorAll("#team1Players input"))
-      .map((input) => input.value.trim())
-      .filter(Boolean);
-    const team2Players = Array.from(document.querySelectorAll("#team2Players input"))
-      .map((input) => input.value.trim())
-      .filter(Boolean);
-  
-    const matchData = {
-      sport,
-      type,
-      team1,
-      team2,
-      score1: type === "live" ? 0 : null,
-      score2: type === "live" ? 0 : null,
-      date: type === "upcoming" ? document.getElementById("date").value || null : null,
-      time: type === "upcoming" ? document.getElementById("time").value || null : null,
-      playersTeam1: team1Players,
-      playersTeam2: team2Players,
-    };
-  
-    try {
-      const submitButton = e.target.querySelector("button[type=submit]");
-      submitButton.disabled = true;
-      await axios.post(`${apiUrl}/matches`, matchData);
-      alert("Match added successfully!");
-      fetchMatches();
-    } catch (error) {
-      alert(`Failed to submit match. ${error.response?.data?.error || "Please try again."}`);
-    } finally {
-      e.target.querySelector("button[type=submit]").disabled = false;
-    }
-  });
+
+    document.getElementById("matchForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const sport = document.getElementById("sport").value;
+      const type = document.getElementById("type").value;
+      const team1 = document.getElementById("team1").value.trim();
+      const team2 = document.getElementById("team2").value.trim();
+      const referees = Array.from(document.querySelectorAll("#referees input"))
+        .map(input => input.value.trim())
+        .filter(Boolean);
+      const team1Players = Array.from(document.querySelectorAll("#team1Players input"))
+        .map(input => input.value.trim())
+        .filter(Boolean);
+      const team2Players = Array.from(document.querySelectorAll("#team2Players input"))
+        .map(input => input.value.trim())
+        .filter(Boolean);
+      const team1Coaches = Array.from(document.querySelectorAll("#team1Coaches input"))
+        .map(input => input.value.trim())
+        .filter(Boolean);
+      const team2Coaches = Array.from(document.querySelectorAll("#team2Coaches input"))
+        .map(input => input.value.trim())
+        .filter(Boolean);
+
+      const matchData = {
+        sport,
+        type,
+        team1,
+        team2,
+        playersTeam1: team1Players,
+        playersTeam2: team2Players,
+        CoachesTeam1: team1Coaches,
+        CoachesTeam2: team2Coaches,
+        Referees: referees,
+        date: type === "upcoming" ? document.getElementById("date").value || null : null,
+        time: type === "upcoming" ? document.getElementById("time").value || null : null,
+      };
+
+      try {
+        await axios.post(`${apiUrl}/matches`, matchData);
+        alert("Match added successfully!");
+      } catch (error) {
+        alert(`Failed to add match: ${error.response?.data?.error || error.message}`);
+      }
+      
+    });
+    
   
   async function fetchMatches() {
     try {
@@ -312,6 +290,6 @@
   }
   
   fetchMatches();
-</script>  
+  </script>
 </body>
 </html>
