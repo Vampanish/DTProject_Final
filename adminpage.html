@@ -111,6 +111,10 @@
         <option value="Football">Football</option>
         <option value="Badminton">Badminton</option>
         <option value="Basketball">Basketball</option>
+        <option value="Tennis">Tennis</option>
+        <option value="Hockey">Hockey</option>
+        <option value="Volleyball">Volleyball</option>
+
       </select><br><br>
 
       <label for="type">Match Type:</label>
@@ -154,7 +158,7 @@
     <div id="matches"></div>
   </div>
   <script>
-  const apiUrl = "http://192.168.1.5:8000/api"; // Adjust API URL as needed
+  const apiUrl = "http://192.168.1.4:8000/api"; // Adjust API URL as needed
 
   document.getElementById("type").addEventListener("change", (e) => {
     const type = e.target.value;
@@ -294,6 +298,15 @@
     }
     else if(sport==="Basketball"){
     url=`adminbasketball.html?matchId=${matchId}`;
+    }
+    else if (sport === "Tennis") {
+    url = `admintennis.html?matchId=${matchId}`;
+    }
+    else if (sport === "Hockey") {
+      url = `adminhockey.html?matchId=${matchId}`;
+    }
+    else if (sport === "Volleyball") {
+      url = `adminvolleyball.html?matchId=${matchId}`;
     }
     window.location.href = url;
   }
