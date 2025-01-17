@@ -142,17 +142,7 @@ body::after {
 }
 
 /* Chatbox Toggle Icon */
-.chat-toggle-icon {
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
-    background-color: #2e8b57; /* Green background */
-    color: white;
-    border-radius: 50%;
-    padding: 10px;
-    font-size: 24px;
-    cursor: pointer;
-}
+
 
 /* Footer styles */
 footer {
@@ -180,7 +170,7 @@ footer button {
     </style>
 
     <script>
-        const API_BASE_URL = "http://192.168.1.5:8000/api"; // Replace with your API base URL
+        const API_BASE_URL = "http://192.168.1.4:8000/api"; // Replace with your API base URL
 
         function getQueryParams() {
             const params = new URLSearchParams(window.location.search);
@@ -264,7 +254,7 @@ footer button {
             }
 
             try {
-                const response = await fetch('http://192.168.1.5:3000/chat', {
+                const response = await fetch('http://192.168.1.4:3000/chat', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
