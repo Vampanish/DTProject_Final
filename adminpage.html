@@ -104,6 +104,7 @@
         <option value="Tennis">Tennis</option>
         <option value="Hockey">Hockey</option>
         <option value="Volleyball">Volleyball</option>
+        <option value="KhoKho">KhoKho</option>
       </select><br><br>
 
       <label for="type">Match Type:</label>
@@ -158,7 +159,7 @@
   </div>
 
   <script>
-    const apiUrl = "http://192.168.1.4:8000/api";
+    const apiUrl = "http://192.168.1.5:8000/api";
 
     document.getElementById("type").addEventListener("change", (e) => {
       const type = e.target.value;
@@ -286,10 +287,15 @@
     else if (sport === "Volleyball") {
       url = `adminvolleyball.html?matchId=${matchId}`;
     }
+    else if (sport === "KhoKho") {
+        url = `adminkhokho.html?matchId=${matchId}`;
+    }
     window.location.href = url;
+    
   }
   
   fetchMatches();
+  setInterval(fetchMatches, 3000);
   </script>
 </body>
 </html>

@@ -3,21 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Table Tennis Scoresheet</title>
-    <link rel="stylesheet" href="stylesTennis.css">
-    <link rel="stylesheet" href="chatbox.css"> <!-- Link to the external chatbox CSS -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
-
+    <title>User - Table Tennis Scoresheet</title>
+    <link rel="stylesheet" href="stylesBadminton.css">
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-    <script src="chat.js" defer></script>
     <script>
-        const API_BASE_URL = "http://192.168.1.4:8000/api"; // Replace with your API base URL
+        const API_BASE_URL = "http://192.168.1.5:8000/api"; // Replace with your API base URL
 
         function getQueryParams() {
             const params = new URLSearchParams(window.location.search);
-            return {
-                matchId: params.get('matchId')
-            };
+            return { matchId: params.get('matchId') };
         }
 
         async function fetchMatchDetails() {
@@ -31,12 +25,10 @@
                 const response = await axios.get(`${API_BASE_URL}/matches/${matchId}`);
                 const match = response.data;
 
-                // Update Team Names and Scores
                 document.getElementById("dept1").textContent = match.team1;
                 document.getElementById("dept2").textContent = match.team2;
                 document.getElementById("score").textContent = `${match.score1} - ${match.score2}`;
 
-                // Populate Game Details Table
                 let gameDetailsBody = '';
                 for (let i = 1; i <= 5; i++) {
                     const set1 = match[`set${i}_team1`] || 0;
@@ -51,119 +43,118 @@
                 }
                 document.getElementById("game-details-body").innerHTML = gameDetailsBody;
 
-                // Populate Player Details for Team 1
-                const team1Players = match.playersTeam1;
-                const team1Stats = team1Players.map(player => `<li>${player}</li>`).join("");
-                document.getElementById("player1-stats").innerHTML = `
-                    <h3>Team 1 Players:</h3>
-                    <ul style="list-style-type: none; padding: 0; margin: 0;">${team1Stats}</ul>
-                `;
-
-                // Populate Player Details for Team 2
-                const team2Players = match.playersTeam2;
-                const team2Stats = team2Players.map(player => `<li>${player}</li>`).join("");
-                document.getElementById("player2-stats").innerHTML = `
-                    <h3>Team 2 Players:</h3>
-                    <ul style="list-style-type: none; padding: 0; margin: 0;">${team2Stats}</ul>
-                `;
             } catch (error) {
                 console.error("Error fetching match details:", error);
                 alert("Unable to fetch match details. Please try again later.");
+                
             }
         }
 
-        function setupAutoReload() {
-            fetchMatchDetails(); // Initial fetch
-            setInterval(fetchMatchDetails, 5000); // Reload every 5 seconds
-        }
-
-        window.onload = setupAutoReload;
-
-        function goBack() {
-            window.history.back();
-        }
-        
-        function appendMessage(content, type) {
-            const chatBox = document.getElementById('chat-box');
-            const messageDiv = document.createElement('div');
-            messageDiv.classList.add('message');
-            messageDiv.classList.add(type === 'user' ? 'user-message' : 'ai-message');
-
-            messageDiv.textContent = content; // Insert plain text, including newlines
-            chatBox.appendChild(messageDiv);
-            chatBox.scrollTop = chatBox.scrollHeight; // Scroll to the latest message
-        }
-
-        // Function to send message to backend
-        async function sendMessage() {
-            const userInput = document.getElementById('user-input').value;
-
-            if (!userInput) {
-                return;
-            }
-
-            // Display the user's message
-            appendMessage(userInput, 'user');
-
-            // Clear the input field
-            document.getElementById('user-input').value = '';
-            if (userInput.toLowerCase() === "who is anish?" || userInput.toLowerCase() == "who is anish") {
-                appendMessage("Vampanish is my Maker", 'ai');
-                return;
-            }
-
-            try {
-                const response = await fetch('http://192.168.1.4:3000/chat', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ prompt: userInput })
-                });
-
-                const data = await response.json();
-                if (data.answer) {
-                    appendMessage(data.answer, 'ai'); // Display the AI's response
-                } else {
-                    appendMessage("Sorry, I have trouble answering your question.", 'ai'); // Default error response
-                }
-            } catch (error) {
-                console.error('Error:', error);
-                appendMessage("Sorry, something went wrong. Please try again later.", 'ai');
-            }
-        }
-
-        function toggleChatBox() {
-            const chatContainer = document.getElementById('chat-container');
-            chatContainer.classList.toggle('show');
-        }
-        function goBack() {
-            window.history.back();
-        }
+        // Initialize the page
+        window.onload = function () {
+            fetchMatchDetails();
+            setInterval(fetchMatchDetails, 3000);
+        };
     </script>
-    
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: white;
+            color: green;
+            margin: 0;
+            padding: 0;
+        }
+
+        .admin-container {
+            padding: 20px;
+            max-width: 800px;
+            margin: auto;
+        }
+
+        .header, .details {
+            margin-bottom: 20px;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header .dept-name {
+            width: 30%;
+            text-align: center;
+            font-size: larger;
+        }
+        body::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('assests/logo.png');
+            background-position: center;
+            background-repeat: no-repeat;
+            background-size: contain;
+            opacity: 0.1;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .header .match-result {
+            text-align: center;
+        }
+
+        .match-result h1 {
+            font-size: 2rem;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            border: 1px solid green;
+            text-align: center;
+            padding: 10px;
+        }
+
+        th {
+            background-color: green;
+            color: white;
+        }
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        .header img {
+            height: 60px;
+            margin-right: 20px;
+        }
+
+        .college-header {
+            font-size: 24px;
+            font-weight: bold;
+            margin: 0;
+        }
+    </style>
 </head>
 <body>
-    <!-- New Header Section -->
-   <!-- College Header Section -->
-<!-- New Header Section -->
-<!-- College Header Section -->
-<div style="background-color: rgb(138, 41, 41); color: white; padding: 20px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); display: flex; align-items: center; justify-content: center;">
-    <!-- Logo on the left side -->
-    <img src="assests/logo.png" alt="TCE Logo" class="img-fluid" style="max-height: 70px; margin-right: 5%;">
-    
-    <!-- Text centered next to the logo -->
-    <div style="text-align: center;">
-        <h1 style="margin: 0; font-size: 36px;">THIAGARAJAR COLLEGE OF ENGINEERING</h1>
-        <h2 style="margin: 10px 0 0; font-size: 28px;">DEPARTMENT OF PHYSICAL EDUCATION</h2>
+    <div class="header">
+        <img src="assests/logo.png" alt="College Logo">
+        <div>
+            <p class="college-header">Thiagarajar College of Engineering</p>
+            <p class="department-header">Department of Physical Education</p>
+        </div>
     </div>
-</div>
-
-
-
-
-    <div class="scoresheet-container">
-        <!-- Header Section -->
+    <div class="admin-container">
         <div class="header">
             <div class="dept-name" id="dept1">
                 <h2>Team 1</h2>
@@ -177,22 +168,6 @@
             </div>
         </div>
 
-        <!-- Image and Player Details Section -->
-        <div class="image-container">
-            <div class="player-left" id="player1-stats">
-                <h3>Team 1 Players:</h3>
-                <ul></ul>
-            </div>
-            <div class="match-image">
-                <img src="assests/TableTennis.png" alt="Match Image"> <!-- Replace with your actual image path -->
-            </div>
-            <div class="player-right" id="player2-stats">
-                <h3>Team 2 Players:</h3>
-                <ul></ul>
-            </div>
-        </div>
-
-        <!-- Game Details Section -->
         <div class="details">
             <h3>Game Details</h3>
             <table>
@@ -203,36 +178,9 @@
                         <th>Team 2 Score</th>
                     </tr>
                 </thead>
-                <tbody id="game-details-body">
-                    <!-- Set scores will go here dynamically -->
-                </tbody>
+                <tbody id="game-details-body"></tbody>
             </table>
         </div>
     </div>
-
-    <!-- Chatbox Container -->
-    <div class="chat-container" id="chat-container">
-        <div class="chat-header">
-            <h3>SportBot</h3> <!-- New catchy name for the chatbox -->
-        </div>
-        <div class="chat-box" id="chat-box"></div>
-        <div class="chat-input">
-            <input type="text" id="user-input" placeholder="Ask about sports..." />
-            <button onclick="sendMessage()">Send</button>
-        </div>
-    </div>
-
-    <!-- Chatbox Toggle Icon -->
-    <div class="chat-toggle-icon" onclick="toggleChatBox()">💬</div>
-
-    <!-- Footer -->
-    <footer style="position: fixed; bottom: 0; left: 0; width: 100%; background-color: #292b2c; color: white; display: flex; justify-content: space-around; align-items: center; padding: 10px 20px; box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.2); z-index: 1000;">
-        <button onclick="location.href='userpage.html'" style="background-color: transparent; border: none; color: white; font-size: 24px; cursor: pointer; display: flex; align-items: center; justify-content: center;">
-            <i class="fas fa-home"></i> <!-- Home icon -->
-        </button>
-        <button onclick="goBack()" style="background-color: transparent; border: none; color: white; font-size: 24px; cursor: pointer; display: flex; align-items: center; justify-content: center;">
-            <i class="fas fa-arrow-left"></i> <!-- Back icon -->
-        </button>
-    </footer>
 </body>
 </html>
