@@ -105,6 +105,7 @@
         <option value="Hockey">Hockey</option>
         <option value="Volleyball">Volleyball</option>
         <option value="KhoKho">KhoKho</option>
+        <option value="Ball Badminton">Ball Badminton</option>
       </select><br><br>
 
       <label for="type">Match Type:</label>
@@ -289,6 +290,9 @@
     }
     else if (sport === "KhoKho") {
         url = `adminkhokho.html?matchId=${matchId}`;
+    }
+    else if (sport === "Ball Badminton") {
+        url = `adminballbadminton.html?matchId=${matchId}`;
     }
     window.location.href = url;
     

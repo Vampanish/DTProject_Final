@@ -3,14 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin - Table Tennis Scoresheet</title>
+    <title>Admin - Badminton Scoresheet</title>
     <link rel="stylesheet" href="stylesBadminton.css">
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script>
         const API_BASE_URL = "http://192.168.1.5:8000/api"; // Replace with your API base URL
-
         let currentSetNumber = 1; // Track the current set number
-        let matchPoint = 11; // Start with initial match point
+        let matchPoint = 21; // Start with initial match point
 
         function getQueryParams() {
             const params = new URLSearchParams(window.location.search);
@@ -36,6 +35,11 @@
                 for (let i = 1; i <= 5; i++) {
                     const set1 = match[`set${i}_team1`] || 0;
                     const set2 = match[`set${i}_team2`] || 0;
+
+                    // Check if this set is completed
+                    const setCompleted = (set1 >= matchPoint && set1 - set2 >= 2) || 
+                                         (set2 >= matchPoint && set2 - set1 >= 2);
+
                     gameDetailsBody += `
                         <tr>
                             <td>Set ${i}</td>
@@ -43,7 +47,13 @@
                             <td>${set2}</td>
                         </tr>
                     `;
+
+                    // Disable the form fields if the set is completed
+                    if (setCompleted) {
+                        disableSetForm(i);
+                    }
                 }
+
                 document.getElementById("game-details-body").innerHTML = gameDetailsBody;
 
             } catch (error) {
@@ -52,7 +62,6 @@
             }
         }
 
-        // Update set score and match score logic
         async function updateSetScore(setNumber, team1Score, team2Score) {
             const { matchId } = getQueryParams();
             if (!matchId) {
@@ -66,32 +75,37 @@
             let currentScore1 = parseInt(document.getElementById("score").textContent.split(" - ")[0]);
             let currentScore2 = parseInt(document.getElementById("score").textContent.split(" - ")[1]);
 
-            // Logic for match point increment
-            if (team1Score === matchPoint - 1 && team2Score === matchPoint - 1) {
-                matchPoint++;
+            const team1SetField = document.getElementById(`set${setNumber}_team1`);
+            const team2SetField = document.getElementById(`set${setNumber}_team2`);
+
+            if (team1SetField.disabled && team2SetField.disabled) {
+                alert(`Set ${setNumber} has already been completed. No changes allowed.`);
+                return;
             }
 
-            if (team1Score >= matchPoint && team2Score < matchPoint) {
-                alert("Team 1 wins the set!");
+            let winnerDeclared = false;
+            if (team1Score >= matchPoint && team1Score - team2Score >= 2) {
+                alert(`Team 1 wins Set ${setNumber}!`);
                 currentScore1++;
-            } else if (team2Score >= matchPoint && team1Score < matchPoint) {
-                alert("Team 2 wins the set!");
+                winnerDeclared = true;
+            } else if (team2Score >= matchPoint && team2Score - team1Score >= 2) {
+                alert(`Team 2 wins Set ${setNumber}!`);
                 currentScore2++;
+                winnerDeclared = true;
             }
 
-            // Increment match point if both teams are 1 point below the match point
-            if (team1Score === matchPoint - 1 && team2Score === matchPoint - 1) {
-                matchPoint++;
+            if (winnerDeclared) {
+                disableSetForm(setNumber);
             }
 
             try {
-                // Send the updated set score to the server
                 await axios.put(`${API_BASE_URL}/matches/${matchId}`, {
                     [`set${setNumber}_team1`]: team1Score,
                     [`set${setNumber}_team2`]: team2Score,
                     score1: currentScore1,
-                    score2: currentScore2
+                    score2: currentScore2,
                 });
+
                 alert("Set score updated successfully!");
                 fetchMatchDetails();
             } catch (error) {
@@ -100,40 +114,43 @@
             }
         }
 
-        // Finish the game and update result
-        async function finishGame() {
-            const { matchId } = getQueryParams();
-            if (!matchId) {
-                alert("No matchId provided!");
-                return;
-            }
+        function disableSetForm(setNumber) {
+            const team1Field = document.getElementById(`set${setNumber}_team1`);
+            const team2Field = document.getElementById(`set${setNumber}_team2`);
+            const updateButton = document.getElementById(`updateSet${setNumber}`);
 
-            const currentScore = document.getElementById("score").textContent.split(" - ");
-            const team1Score = parseInt(currentScore[0]);
-            const team2Score = parseInt(currentScore[1]);
-
-            let result;
-            if (team1Score > team2Score) {
-                result = `Winner: Team 1 (${team1Score} - ${team2Score})`;
-            } else if (team2Score > team1Score) {
-                result = `Winner: Team 2 (${team2Score} - ${team1Score})`;
-            } else {
-                result = "Match Drawn";
-            }
-
-            try {
-                await axios.put(`${API_BASE_URL}/matches/${matchId}`, { result });
-                alert(result);
-                fetchMatchDetails(); 
-                await axios.delete(`${API_BASE_URL}/matches/${matchId}`);
-                window.location.replace("adminpage.html");
-            } catch (error) {
-                console.error("Error finishing the game:", error);
-                alert("Unable to finish the game. Please try again later.");
+            if (team1Field && team2Field && updateButton) {
+                team1Field.disabled = true;
+                team2Field.disabled = true;
+                updateButton.disabled = true;
             }
         }
 
-        // Setup form for adding and removing sets
+        function updateScore(inputId, increment) {
+            const inputField = document.getElementById(inputId);
+            let currentValue = parseInt(inputField.value);
+            const setNumber = inputId.match(/\d+/)[0];
+            const team1Score = parseInt(document.getElementById(`set${setNumber}_team1`).value);
+            const team2Score = parseInt(document.getElementById(`set${setNumber}_team2`).value);
+
+            if (document.getElementById(`set${setNumber}_team1`).disabled) {
+                alert(`Set ${setNumber} is completed. Scores cannot be modified.`);
+                return;
+            }
+
+            if (increment < 0 && currentValue <= 0) {
+                return;
+            }
+
+            if ((team1Score >= matchPoint && team1Score - team2Score >= 2) || 
+                (team2Score >= matchPoint && team2Score - team1Score >= 2)) {
+                alert(`Set ${setNumber} is already completed. Scores cannot be changed.`);
+                return;
+            }
+
+            inputField.value = currentValue + increment;
+        }
+
         function setupEditForm() {
             const formContainer = document.getElementById("edit-form");
 
@@ -153,27 +170,72 @@
             formContainer.appendChild(addButton);
         }
 
-        // Add a form for each set score input
         function addSetForm(formContainer, setNumber) {
             const form = document.createElement("form");
             form.classList.add("set-form");
             form.innerHTML = `
-                <label for="set${setNumber}_team1">Set ${setNumber} - Team 1:</label>
-                <input type="number" id="set${setNumber}_team1" name="set${setNumber}_team1" min="0">
-                <label for="set${setNumber}_team2">Set ${setNumber} - Team 2:</label>
-                <input type="number" id="set${setNumber}_team2" name="set${setNumber}_team2" min="0">
-                <button type="button" onclick="updateSetScore(${setNumber}, document.getElementById('set${setNumber}_team1').value, document.getElementById('set${setNumber}_team2').value)">Update Set ${setNumber}</button>
+                <div class="set-score-container">
+                    <div class="set-score">
+                        <label for="set${setNumber}_team1">Set ${setNumber} - Team 1:</label>
+                        <button type="button" onclick="updateScore('set${setNumber}_team1', 1)">+</button>
+                        <input type="number" id="set${setNumber}_team1" name="set${setNumber}_team1" value="0" readonly>
+                        <button type="button" onclick="updateScore('set${setNumber}_team1', -1)">-</button>
+                    </div>
+                    <div class="set-score">
+                        <label for="set${setNumber}_team2">Set ${setNumber} - Team 2:</label>
+                        <button type="button" onclick="updateScore('set${setNumber}_team2', 1)">+</button>
+                        <input type="number" id="set${setNumber}_team2" name="set${setNumber}_team2" value="0" readonly>
+                        <button type="button" onclick="updateScore('set${setNumber}_team2', -1)">-</button>
+                    </div>
+                </div>
+                <button type="button" id="updateSet${setNumber}" onclick="updateSetScore(${setNumber}, 
+                    document.getElementById('set${setNumber}_team1').value, 
+                    document.getElementById('set${setNumber}_team2').value)">Update Set ${setNumber}</button>
             `;
             formContainer.insertBefore(form, formContainer.querySelector(".add-set-button"));
         }
 
-        // Initialize the page
+        async function finishGame() {
+            const { matchId } = getQueryParams();
+            if (!matchId) {
+                alert("No matchId provided!");
+                return;
+            }
+
+            try {
+                const response = await axios.delete(`${API_BASE_URL}/matches/${matchId}`);
+
+                if (response.status === 200) {
+                    alert("Game has been deleted and marked as finished!");
+                    window.location.href = "adminpage.html";
+                }
+            } catch (error) {
+                console.error("Error deleting game:", error);
+                alert("Unable to delete the game. Please try again later.");
+            }
+        }
+
         window.onload = function () {
             fetchMatchDetails();
             setupEditForm();
         };
     </script>
     <style>
+        input[type="number"] {
+            -moz-appearance: textfield; /* For Firefox */
+            -webkit-appearance: none; /* For Chrome, Safari, and Edge */
+            appearance: none; /* General property */
+            width: 40px;
+            text-align: center;
+            margin: 0 5px;
+            font-size: 16px;
+        }
+
+        input[type="number"]::-webkit-inner-spin-button, 
+        input[type="number"]::-webkit-outer-spin-button {
+            -webkit-appearance: none; /* For Chrome, Safari, and Edge */
+            margin: 0;
+        }
         body {
             font-family: Arial, sans-serif;
             background-color: white;
@@ -204,19 +266,19 @@
             font-size: larger;
         }
         body::after {
-            content: "";
+            content: ""; /* Empty content for the watermark */
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background-image: url('assests/logo.png');
+            background-image: url('assests/logo.png'); /* Add your watermark image URL */
             background-position: center;
             background-repeat: no-repeat;
-            background-size: contain;
-            opacity: 0.1;
-            pointer-events: none;
-            z-index: -1;
+            background-size: contain; /* Adjust the image size to fit the page */
+            opacity: 0.1; /* Adjust opacity to make the watermark subtle */
+            pointer-events: none; /* Ensure the watermark doesn’t interfere with clicks on the page */
+            z-index: -1; /* Keeps the watermark behind the text */
         }
 
         .header .match-result {
@@ -273,7 +335,6 @@
             opacity: 0.8;
         }
 
-
         .header {
             display: flex;
             align-items: center;
@@ -307,14 +368,14 @@
     <div class="admin-container">
         <div class="header">
             <div class="dept-name" id="dept1">
-                <h2>Team 1</h2>
+                <h2 style="font-size: larger;">Team 1</h2>
             </div>
             <div class="match-result">
-                <h2>Table Tennis</h2>
+                <h2>Ball Badminton</h2>
                 <h1 class="score" id="score">0 - 0</h1>
             </div>
             <div class="dept-name" id="dept2">
-                <h2>Team 2</h2>
+                <h2 style="font-size: larger;">Team 2</h2>
             </div>
         </div>
 
@@ -337,11 +398,8 @@
             </table>
         </div>
 
-        <!-- Finish Game Button -->
-        <button id="finish-game" onclick="finishGame()"  style="background-color: green; color: white; font-size: 24px; padding: 15px 30px; border: none; border-radius: 10px; cursor: pointer; width: 100%; max-width: 300px; text-align: center;">
-            Finish Game
-        </button>
-        
+        <button id="finish-game" onclick="finishGame()">Finish Game</button>
     </div>
-</body>
+    </style>
+</head>
 </html>

@@ -242,15 +242,19 @@
     }
 
     // Helper function to create foul button
-    function createFoulButton(team, playerIndex) {
-  const button = document.createElement('button');
-  button.textContent = "Add Foul";
-  button.style.backgroundColor = "#4CAF50"; /* Inline CSS for green color */
-  button.style.color = "white";
-  button.style.borderRadius = "4px";
-  button.style.marginLeft = "10px"; /* Add spacing */
+function createFoulButton(team, playerIndex) {
+  const container = document.createElement('div');
+  container.style.display = "flex";
+  container.style.gap = "10px"; // Space between buttons
 
-  button.addEventListener('click', async () => {
+  // Add Foul Button
+  const addFoulButton = document.createElement('button');
+  addFoulButton.textContent = "Add Foul";
+  addFoulButton.style.backgroundColor = "#4CAF50";
+  addFoulButton.style.color = "white";
+  addFoulButton.style.borderRadius = "4px";
+
+  addFoulButton.addEventListener('click', async () => {
     if (team === 1) {
       match.individualfoulteam1[playerIndex]++;
       if (match.individualfoulteam1[playerIndex] >= 5) {
@@ -274,17 +278,48 @@
     // Refresh match details
     fetchMatchDetails(matchId);
   });
-  return button;
+
+  // Undo Foul Button
+  const undoFoulButton = document.createElement('button');
+undoFoulButton.textContent = "Undo Foul";
+undoFoulButton.style.backgroundColor = "#f44336";
+undoFoulButton.style.color = "white";
+undoFoulButton.style.borderRadius = "4px";
+
+undoFoulButton.addEventListener('click', async () => {
+  if (team === 1 && match.individualfoulteam1[playerIndex] > 0) {
+    match.individualfoulteam1[playerIndex]--;
+    if (match.individualfoulteam1[playerIndex] < 5) {
+      match.status1[playerIndex] = "Active"; // Restore to Active if fouls drop below 5
+    }
+  } else if (team === 2 && match.individualfoulteam2[playerIndex] > 0) {
+    match.individualfoulteam2[playerIndex]--;
+    if (match.individualfoulteam2[playerIndex] < 5) {
+      match.status2[playerIndex] = "Active"; // Restore to Active if fouls drop below 5
+    }
+  }
+
+  // Update match data on the server
+  await axios.put(`${API_BASE_URL}/matches/${matchId}`, {
+    individualfoulteam1: match.individualfoulteam1,
+    individualfoulteam2: match.individualfoulteam2,
+    status1: match.status1,
+    status2: match.status2,
+  });
+
+  // Refresh match details
+  fetchMatchDetails(matchId);
+});
+
+  container.appendChild(addFoulButton);
+  container.appendChild(undoFoulButton);
+  return container;
 }
 
 
-    // Disable editing for fouled-out players
-    function disableRow(row) {
-      row.querySelectorAll("button").forEach((button) => {
-        button.disabled = true;
-      });
-    }
 
+    // Disable editing for fouled-out players
+    
     // Populate Team 1 Data
     match.playersTeam1.forEach((player, index) => {
       const [name, jersey] = player.split(' ');
@@ -309,7 +344,7 @@
       statusCell.textContent = match.status1[index] || "Active";
       if (match.status1[index] === "Fouled Out") {
         statusCell.style.color = "red";
-        disableRow(row);
+        
       } else {
         statusCell.style.color = "green";
       }
@@ -339,7 +374,7 @@
       statusCell.textContent = match.status2[index] || "Active";
       if (match.status2[index] === "Fouled Out") {
         statusCell.style.color = "red";
-        disableRow(row);
+        
       } else {
         statusCell.style.color = "green";
       }
