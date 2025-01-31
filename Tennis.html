@@ -11,7 +11,7 @@
     <script src="chat.js" defer></script>
     <link rel="stylesheet" href="chatbox.css">
     <script>
-        const API_BASE_URL = "http://192.168.1.5:8000/api"; // Replace with your API base URL
+        const API_BASE_URL = "http://192.168.1.2:8000/api"; // Replace with your API base URL
 
         function getQueryParams() {
             const params = new URLSearchParams(window.location.search);
@@ -82,7 +82,7 @@
             }
 
             try {
-                const response = await fetch('http://192.168.1.5:3000/chat', {
+                const response = await fetch('http://192.168.1.2:3000/chat', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
